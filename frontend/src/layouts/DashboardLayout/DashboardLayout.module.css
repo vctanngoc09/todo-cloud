@@ -1,0 +1,123 @@
+.wrapper {
+  background-color: var(--p-white);
+  padding: 20px;
+  display: flex;
+  height: 100vh;
+}
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  background-color: rgba(244, 244, 244, 1);
+  border-radius: 20px;
+  padding: 18px;
+  gap: 15px;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+.hide {
+  position: absolute;
+  left: 0;
+
+  transform: translateX(-90%);
+}
+/* header */
+.sidebar .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.sidebar .header p {
+  font-size: 20px;
+  font-weight: 500;
+}
+.sidebar .header .iconMenu {
+  position:absolute;
+  right:-11%;
+  padding: 10px;
+  border-radius: 50%;
+
+  cursor: pointer;
+  z-index: 10;
+  background-color: rgb(179, 252, 247);
+}
+.sidebar .header .iconMenu svg {
+  font-weight: 500;
+}
+/* .sidebar .header .hide {
+  right: -40%;
+} */
+/* Tìm kiếm */
+.search {
+  display: flex;
+  align-items: center;
+  border: var(--p-solid-boder);
+  border-radius: 8px;
+}
+.search svg {
+  font-size: var(--p-font-size);
+  margin: 0 15px;
+  color: rgb(151, 151, 151);
+}
+.search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px;
+  background-color: rgba(244, 244, 244, 1);
+  font-weight: 500;
+  font-size: var(--p-font-size);
+  border-radius: 8px;
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.section .title {
+  font-size: var(--p-font-size);
+  font-weight: 500;
+}
+.section ul {
+  padding: 0 10px;
+}
+.section ul li {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 500;
+  color: rgb(61, 59, 59);
+  transition: all 0.3s ease;
+}
+.section ul li:hover {
+  background-color: rgb(214, 212, 212);
+}
+.section ul .active {
+  font-weight: 700;
+  color: rgb(47, 46, 46);
+  background-color: rgb(214, 212, 212);
+}
+.section ul li .left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.section ul li .left svg {
+  color: rgb(141, 141, 141);
+}
+.section ul li .count {
+  background-color: rgb(235, 235, 235);
+  padding: 1px 10px;
+  border-radius: 3px;
+}
+.section ul .active .count {
+  background-color: rgb(248, 248, 248);
+}
+.main {
+  flex: 1;
+  margin-left: 35px;
+}
