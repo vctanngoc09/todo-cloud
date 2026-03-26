@@ -78,11 +78,11 @@ function Day() {
       <div className={styles.header}>Thứ 3</div>
       <div className={styles.content}>
         {hours.map((hour, index) => (
-          <div key={hour} className={styles.calendarDay}>
-            <div className={styles.time}>{hour}</div>
+          <div key={hour.id} className={styles.calendarDay}>
+            <div className={styles.time}>{hour.title}</div>
             <div className={styles.tasks}>
               {tasks
-                .filter((task) => getHour(task.due_date) === index)
+                .filter((task) => getHour(task.due_date) === hour.id)
                 .map((task) => (
                   <div key={task.id} className={styles.description}>
                     {task.description}

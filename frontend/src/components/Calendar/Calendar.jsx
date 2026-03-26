@@ -17,8 +17,8 @@ function Calendar() {
   };
   const optionList = [
     { key: options.Day, label: "Ngày" },
-    { key: options.Month, label: "Tuần" },
-    { key: options.Week, label: "Tháng" },
+    { key: options.Week, label: "Tuần" },
+    { key: options.Month, label: "Tháng" },
   ];
   const [active, setActive] = useState(options.Day);
  

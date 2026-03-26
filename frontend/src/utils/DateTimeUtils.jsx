@@ -29,10 +29,22 @@ class DateTimeUtils {
     const hours = [];
 
     for (let i = 0; i < 24; i++) {
-      hours.push(`${i.toString().padStart(2, "0")}:00`);
+      const hour = {
+        id: i,
+        title: `${i.toString().padStart(2, "0")}:00`,
+      };
+      hours.push(hour);
     }
     return hours;
   }
+  // static getHours() {
+  //   const hours = [];
+
+  //   for (let i = 0; i < 24; i++) {
+  //     hours.push(`${i.toString().padStart(2, "0")}:00`);
+  //   }
+  //   return hours;
+  // }
   static formatDateVN(date) {
     const d = new Date(date);
     const day = d.getDate().toString().padStart(2, "0");
@@ -42,6 +54,23 @@ class DateTimeUtils {
   }
   static formatDateToday() {
     return this.formatDate(new Date());
+  }
+  static isSameDay(d1, d2) {
+    return (
+      d1.getDate() === d2.getDate() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getFullYear() === d2.getFullYear()
+    );
+  }
+  static isToDay(date) {
+    const d = new Date(date);
+    const now = new Date();
+
+    return (
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear()
+    );
   }
   static isCurrentHour(date) {
     const d = new Date(date);
