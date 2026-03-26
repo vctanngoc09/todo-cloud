@@ -1,0 +1,177 @@
+.wrapper {
+  width: 350px;
+  margin-left: 20px;
+  height: 100%;
+}
+
+.form {
+  display: flex;
+  background-color: rgb(248, 248, 248);
+  border-radius: 20px;
+  padding: 18px;
+  height: 100%;
+  gap: 10px;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.header svg {
+  cursor: pointer;
+  color: #888;
+}
+
+/* Input */
+.inputMain {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background-color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Textarea */
+.textarea {
+  width: 100%;
+  height: 120px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background-color: #fff;
+  resize: none;
+  outline: none;
+}
+
+/* Row alignment (List, Date, Tags) */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.row label {
+  width: 100px;
+  font-weight: 500;
+  color: #555;
+  font-size: 16px;
+}
+
+.select,
+.dateInput {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  background-color: #f0f0f0;
+  color: #444;
+  outline: none;
+}
+
+/* Tags */
+.tagGroup {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tagBadge {
+  background-color: #d1edf2;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.addTagBtn {
+  background-color: #eee;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #666;
+}
+
+.addTagBtn:hover {
+  background-color: #d1edf2;
+}
+
+/* Subtasks */
+.subtasksSection {
+  margin-top: 10px;
+  flex-grow: 1;
+}
+
+.subtaskTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.addSubtask {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #8892a0;
+  cursor: pointer;
+  margin-bottom: 12px;
+  font-size: 14px;
+  background: none;
+  outline: none;
+  padding: 10px 5px 10px 0px;
+  border: none;
+  border-bottom: 1px solid #eee;
+  border-radius: 10px;
+}
+
+.addSubtask:hover {
+  background-color: whitesmoke;
+  border-radius: 8px;
+}
+
+.subtaskItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #f5c542;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.deleteBtn {
+  padding: 10px 30px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  background-color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.saveBtn {
+  padding: 10px 30px;
+  border-radius: 8px;
+  border: none;
+  background-color: #f5c542;
+  cursor: pointer;
+  font-weight: 600;
+}

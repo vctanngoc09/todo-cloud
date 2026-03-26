@@ -1,0 +1,210 @@
+.wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  background-color: rgb(255, 255, 255);
+}
+.wrapper .right {
+  height: 100%;
+}
+
+.wrapper .left {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header h1 {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.count {
+  background: #f1f1f1;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* Add task */
+
+.addnewtask {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  color: #888;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: none;
+  outline: none;
+}
+
+.iconadd {
+  margin-right: 10px;
+}
+
+.icon {
+  color: #888;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+
+  appearance: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+
+  display: inline-block;
+  position: relative;
+}
+
+.checkbox:hover {
+  border-color: #bbb;
+}
+
+.checkbox:checked {
+  background-color: #ccc;
+  border-color: #ccc;
+}
+
+.checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.list {
+  margin-top: 5px;
+}
+
+/* Item */
+
+.item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  padding: 12px 10px;
+
+  border: none;
+  border-bottom: 1px solid #eee;
+  background: none;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.itemtop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Container chứa các thông tin phụ bên dưới */
+.itembottom {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 8px; /* Tạo khoảng cách với tiêu đề task */
+}
+
+/* Mỗi cụm thông tin (Ngày, Subtasks, Category) */
+.signature {
+  display: flex; /* Quan trọng: Để icon và chữ nằm ngang */
+  align-items: center;
+  gap: 8px; /* Khoảng cách giữa icon/badge và chữ */
+  padding: 0 15px;
+  border-right: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Xóa border-right cho item cuối cùng */
+.signature:last-child {
+  border-right: none;
+}
+
+/* Style cho các Badge (ô số 1 và ô màu) */
+.badge {
+  background-color: #e8e8e8; /* Màu xám nhạt */
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Ô màu sắc cho Category */
+.colorBox {
+  width: 18px;
+  height: 14px;
+  background-color: #ff6b6b; /* Màu đỏ hồng như mẫu */
+  border-radius: 4px;
+}
+
+.colorBoxHiden {
+  width: 20px;
+  height: 14px;
+  background-color: white;
+}
+
+/* Icon lịch */
+.icondeadline {
+  color: #666;
+  font-size: 14px;
+  margin-left: 20px;
+}
+
+.itemleft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.item:hover {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+}
+
+.addnewtask:hover {
+  background-color: #f8f8f8;
+}
+
+.signature span {
+  font-size: 12px;
+}
+
+.title {
+  font-size: 16px;
+}
+
+/* Checkbox */
+.item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
