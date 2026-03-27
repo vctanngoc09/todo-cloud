@@ -1,0 +1,237 @@
+.wrapper {
+  min-height: 100vh;
+  background-color: #f8f8f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+  padding: 20px;
+}
+
+.container {
+  width: 1000px;
+  max-width: 100%;
+  background-color: #fff;
+  border-radius: 40px; /* Bo góc cực lớn như mẫu */
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+}
+
+.leftSide {
+  flex: 0.8;
+  /* Thiết lập để ảnh nền hiển thị đẹp */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  padding: 40px;
+  color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  background-color: #f5c542;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.innerCircle {
+  width: 12px;
+  height: 12px;
+  background-color: #333;
+  border-radius: 50%;
+}
+
+.contentLeft h1 {
+  font-size: 42px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.highlight {
+  color: #f5c542;
+}
+
+.contentLeft p {
+  color: #aaa;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* --- Phía bên phải (Form) --- */
+.rightSide {
+  flex: 1;
+  padding: 60px 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.formHeader h2 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.formHeader p {
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.inputGroup {
+  margin-bottom: 20px;
+}
+
+.inputGroup label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgotPass {
+  font-size: 10px;
+  font-weight: 600;
+  color: #9c8446;
+  text-decoration: none;
+}
+
+.inputGroup input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: none;
+  background-color: #f3f3f3;
+  outline: none;
+}
+
+.btnSignIn {
+  width: 100%;
+  padding: 16px;
+  background-color: #f5c542;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: transform 0.2s;
+}
+
+.btnSignIn:hover {
+  transform: translateY(-2px);
+  background-color: #f0bc30;
+}
+
+.divider {
+  text-align: center;
+  margin: 30px 0;
+  position: relative;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #eee;
+  z-index: 1;
+}
+
+.divider span {
+  background-color: #fff;
+  padding: 0 16px;
+  color: #999;
+  font-size: 11px;
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+}
+
+.socialButtons {
+  display: flex;
+  gap: 15px;
+}
+
+.socialBtn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background-color: #f3f3f3;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.googleIcon {
+  color: #db4437;
+}
+.fbIcon {
+  color: #4267b2;
+}
+
+.footerText {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 14px;
+  color: #666;
+}
+
+.footerText a {
+  color: #9c8446;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Footer trang */
+.pageFooter {
+  width: 1000px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  color: #999;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.footerLinks {
+  display: flex;
+  gap: 20px;
+}
+
+.footerLinks a {
+  color: #999;
+  text-decoration: none;
+}
