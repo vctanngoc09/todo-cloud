@@ -1,0 +1,358 @@
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@800&family=DM+Sans:wght@400;500&display=swap");
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #000000;
+  font-family: "DM Sans", sans-serif;
+}
+
+/* Header */
+.header {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 28px 20px 20px; 
+}
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.titleRow h1 {
+  font-family: "DM Sans", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+}
+.dateStr {
+  font-size: 13px;
+  color: #555c75;
+  text-transform: capitalize;
+}
+
+.filters {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  color: #555c75;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+.btn:hover {
+  color: #000000;
+}
+.btn.active {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(255,255,255,0.15);
+  color: #000000;
+}
+
+/* Main */
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 20px 100px;
+}
+
+.group {
+  margin-bottom: 24px;
+}
+.gLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.gLabel span:first-child {
+  font-family: "DM Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555c75;
+}
+.count {
+  font-size: 11px;
+  color: #555c75;
+  background: rgba(255,255,255,0.05);
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+/* Card */
+.card {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: #e9eaeb;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  transition: transform 0.18s, opacity 0.25s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  background: rgba(116, 175, 248, 0.4);
+}
+.card.out {
+  opacity: 0;
+  transform: translateX(8px);
+}
+
+.accent {
+  width: 3px;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+.body {
+  flex: 1;
+  padding: 12px 14px;
+  min-width: 0;
+}
+.top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.time {
+  font-size: 11px;
+  color: #555c75;
+  margin-left: auto;
+}
+.cardTitle {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.del {
+  padding: 0 14px;
+  align-self: stretch;
+  background: transparent;
+  border: none;
+  color: #555c75;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s; }
+.card:hover .del {
+  opacity: 1;
+}
+.del:hover {
+  color: #f97b4f;
+}
+
+/* Empty */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items:
+  center; gap: 8px;
+  padding: 60px 0;
+  color: #555c75;
+  font-size: 14px; }
+.empty p:first-child {
+  font-size: 32px;
+  opacity: 0.4;
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  border: none;
+  background: #4f9cf9;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(79,156,249,0.4);
+  transition: transform 0.18s;
+  z-index: 50; }
+.fab:hover {
+  transform: scale(1.07);
+}
+
+/* Filter dot */
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 7, 7, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+@media (min-width: 480px) {
+  .overlay {
+    align-items: center;
+  }
+}
+
+.modal {
+  background: #cccccd;
+  border: 3px solid rgba(0, 0, 0, 0.6);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 24px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+@media (min-width: 480px) {
+  .modal {
+    border-radius: 20px;
+  }
+}
+
+.mHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mHead h2 {
+  font-family: "DM Sans", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+}
+.mHead button {
+  background: transparent;
+  border: none;
+  color: #555c75;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: #000000;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+.input:focus {
+  border-color: rgba(79,156,249,0.5);
+}
+.input::placeholder {
+  color: #605c88;
+}
+.input option {
+  background: #cccccd;
+}
+input[type="date"], input[type="time"] {
+  color-scheme: dark;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+.row .input {
+  flex: 1;
+}
+
+.ghost {
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: #000000;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ghost:hover {
+  color: #6e6f6f;
+}
+
+.newType {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+}
+.colors {
+  display: flex;
+  gap: 8px;
+}
+.colors .dot {
+  width: 22px;
+  height: 22px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+.colors .dot:hover {
+  transform: scale(1.2);
+}
+
+.submit {
+  padding: 12px;
+  background: #4f9cf9;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.submit:hover {
+  opacity: 0.88;
+}
