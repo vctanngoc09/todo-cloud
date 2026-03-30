@@ -1,0 +1,12 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+
+}
+.wrapper span {
+  font-size: var(--h1-font-size);
+  font-weight: 700;
+  line-height: var(--h1-line-height);
+}

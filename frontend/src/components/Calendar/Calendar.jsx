@@ -4,6 +4,7 @@ import Day from "./Day/Day";
 import Month from "./Month/Month";
 import Week from "./Week/Week";
 import DateTimeUtils from "../../utils/DateTimeUtils";
+import HeaderMain from "../HeaderMain/HeaderMain";
 function Calendar() {
   const options = {
     Day: "Day",
@@ -21,14 +22,12 @@ function Calendar() {
     { key: options.Month, label: "Tháng" },
   ];
   const [active, setActive] = useState(options.Day);
- 
+
   const dateToday = DateTimeUtils.formatDateVN(DateTimeUtils.now());
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.header}>
-        <span> {dateToday}</span>
-      </div>
+      <HeaderMain />
       <div className={styles.options}>
         {optionList.map((option) => (
           <button

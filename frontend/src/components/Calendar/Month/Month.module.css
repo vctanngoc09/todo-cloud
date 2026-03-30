@@ -7,8 +7,9 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  background-color: rgb(248, 248, 248);
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 
 .dayHeader {
@@ -16,6 +17,7 @@
   padding: 10px;
   text-align: center;
   font-weight: bold;
+  box-shadow: 1px 3px 3px -1px rgb(205, 205, 205);
 }
 
 .dayCell {
@@ -25,6 +27,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  box-shadow: 1px 3px 3px -1px rgb(205, 205, 205);
 }
 
 .dayNumber {
@@ -56,22 +59,23 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 14px;
   flex: 1;
-  min-width: 0; /* 🔥 BẮT BUỘC */
+  min-width: 0;
 }
 
 /* Màu sắc theo trạng thái */
 .hoanthanh {
-  background-color: #dcfce7;
-  color: #166534;
+  background-color: #d2f7fc;
+  color: #000000;
 }
 .danglam {
-  background-color: #fef9c3;
-  color: #854d0e;
+  background-color: #ffc8d4;
+  color: #000000;
 }
 .chuahoanthanh {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background-color: #c9ffe9;
+  color: #000000;
 }
 
 .taskDot {

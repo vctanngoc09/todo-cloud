@@ -230,11 +230,13 @@ function Month() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.calendarGrid}>
-        {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((day) => (
-          <div key={day} className={styles.dayHeader}>
-            {day}
-          </div>
-        ))}
+        {["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"].map(
+          (day) => (
+            <div key={day} className={styles.dayHeader}>
+              {day}
+            </div>
+          ),
+        )}
 
         {/* Ô trống của tháng trước */}
         {Array.from({ length: emptyDaysBefore }).map((_, i) => (
