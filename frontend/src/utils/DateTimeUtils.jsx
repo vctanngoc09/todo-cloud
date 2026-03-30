@@ -83,5 +83,27 @@ class DateTimeUtils {
       d.getFullYear() === now.getFullYear()
     );
   }
+  static getCurrentWeek() {
+  const today = new Date();
+  const day = today.getDay() || 7;
+
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - day + 1);
+
+  const week = [];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+
+    week.push({
+      id: d.getDay(),
+      title: d.getDay() === 0 ? "Chủ nhật" : `Thứ ${d.getDay() + 1}`,
+      date: d,
+    });
+  }
+
+  return week;
+}
 }
 export default DateTimeUtils;

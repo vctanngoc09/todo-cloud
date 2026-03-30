@@ -235,33 +235,9 @@ function getHour(dateString) {
 function getDay(dateString) {
   return new Date(dateString).getDay();
 }
-
-function getCurrentWeek() {
-  const today = new Date();
-  const day = today.getDay() || 7;
-
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - day + 1);
-
-  const week = [];
-
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-
-    week.push({
-      id: d.getDay(),
-      title: d.getDay() === 0 ? "Chủ nhật" : `Thứ ${d.getDay() + 1}`,
-      date: d,
-    });
-  }
-
-  return week;
-}
-
 function Week() {
   const hours = DateTimeUtils.getHours();
-  const arrDayOfWeek = getCurrentWeek();
+  const arrDayOfWeek = DateTimeUtils.getCurrentWeek();
 
   const taskMap = {};
 
