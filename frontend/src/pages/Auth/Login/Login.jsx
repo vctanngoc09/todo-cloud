@@ -1,9 +1,58 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../../api/auth"; // Đường dẫn tới file api/auth.js chuyên nghiệp của bạn
 import styles from "./Login.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons";
 import bgLeft from "../../../assets/bgleft.png";
 
 function Login() {
+  const navigate = useNavigate();
+
+  // 1. Khai báo State quản lý dữ liệu nhập
+  const [credentials, setCredentials] = useState({
+    username: "", // Backend dùng field này để đăng nhập
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // 2. Hàm xử lý khi gõ phím
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // 3. Hàm xử lý Đăng nhập
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      // Gọi hàm login từ lớp API chuyên nghiệp
+      // Hàm này đã bao gồm logic: AuthService.setToken(res.token)
+      await login(credentials);
+
+      alert("Đăng nhập thành công! Chào mừng bạn trở lại.");
+
+      // Chuyển hướng về trang chủ hoặc trang Dashboard
+      navigate("/");
+    } catch (err) {
+      // Xử lý lỗi từ Backend (ví dụ: "Sai mật khẩu", "User không tồn tại")
+      const errorMsg =
+        err.response?.data?.message ||
+        "Đăng nhập thất bại. Vui lòng kiểm tra lại!";
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -39,10 +88,31 @@ function Login() {
             <p>Tiếp tục hành trình của bạn từ nơi đã tạm dừng.</p>
           </div>
 
-          <form className={styles.form}>
+          {/* Hiển thị thông báo lỗi nếu có */}
+          {error && (
+            <div
+              style={{
+                color: "#ff4d4d",
+                marginBottom: "15px",
+                textAlign: "center",
+                fontWeight: "500",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <form className={styles.form} onSubmit={handleLogin}>
             <div className={styles.inputGroup}>
-              <label>ĐỊA CHỈ EMAIL</label>
-              <input type="email" placeholder="ten@vidu.com" />
+              <label>TÊN ĐĂNG NHẬP</label>
+              <input
+                type="text"
+                name="username" // Khớp với state credentials
+                value={credentials.username}
+                onChange={handleChange}
+                placeholder="Nhập tên đăng nhập của bạn"
+                required
+              />
             </div>
 
             <div className={styles.inputGroup}>
@@ -52,11 +122,22 @@ function Login() {
                   QUÊN MẬT KHẨU?
                 </a>
               </div>
-              <input type="password" placeholder="••••••••" />
+              <input
+                type="password"
+                name="password" // Khớp với state credentials
+                value={credentials.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                required
+              />
             </div>
 
-            <button type="submit" className={styles.btnSignIn}>
-              Đăng nhập
+            <button
+              type="submit"
+              className={styles.btnSignIn}
+              disabled={loading}
+            >
+              {loading ? "Đang xác thực..." : "Đăng nhập"}
             </button>
 
             <div className={styles.divider}>
