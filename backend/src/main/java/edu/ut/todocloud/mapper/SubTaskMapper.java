@@ -18,6 +18,15 @@ public class SubTaskMapper {
         return subTask;
     }
 
+    public SubTask toEntityFromTitle(String title, Task task) {
+        if (title == null) return null;
+        SubTask subTask = new SubTask();
+        subTask.setTitle(title);
+        subTask.setCompleted(false);
+        subTask.setTask(task);
+        return subTask;
+    }
+
     public SubTaskResponse toResponse(SubTask subTask) {
         if (subTask == null) return null;
         SubTaskResponse response = new SubTaskResponse();

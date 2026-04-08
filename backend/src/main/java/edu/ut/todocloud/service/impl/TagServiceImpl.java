@@ -4,10 +4,14 @@ import edu.ut.todocloud.dto.request.TagRequest;
 import edu.ut.todocloud.dto.response.TagResponse;
 import edu.ut.todocloud.mapper.TagMapper;
 import edu.ut.todocloud.model.Tag;
+import edu.ut.todocloud.model.Task;
+import edu.ut.todocloud.model.TaskTag;
 import edu.ut.todocloud.model.User;
 import edu.ut.todocloud.repository.ITagRepository;
+import edu.ut.todocloud.repository.ITaskTagRepository;
 import edu.ut.todocloud.repository.IUserRepository;
 import edu.ut.todocloud.service.ITagService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ public class TagServiceImpl implements ITagService {
 
     private final ITagRepository tagRepository;
     private final IUserRepository userRepository;
+    private final ITaskTagRepository taskTagRepository;
 
     @Override
     public List<TagResponse> getAllTagsByUserId(Long userId) {
@@ -48,5 +53,24 @@ public class TagServiceImpl implements ITagService {
     @Override
     public void deleteTag(Long id) {
         tagRepository.deleteById(id);
+    }
+
+    // Bạn cần Autowired ITaskTagRepository vào đây
+    @Override
+    @Transactional
+    public void assignTagsToTask(List<Long> tagIds, Task task) {
+        if (tagIds == null || tagIds.isEmpty()) return;
+
+        List<TaskTag> taskTags = tagIds.stream().map(tagId -> {
+            // 1. Tìm Tag từ DB
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new RuntimeException("Tag không tồn tại: " + tagId));
+
+            // 2. Dùng Mapper để đúc ra thực thể trung gian
+            return TagMapper.toTaskTagEntity(tag, task);
+        }).toList();
+
+        // 3. Lưu hàng loạt vào bảng trung gian
+        taskTagRepository.saveAll(taskTags);
     }
 }

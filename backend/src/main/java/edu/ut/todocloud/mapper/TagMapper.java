@@ -3,6 +3,8 @@ package edu.ut.todocloud.mapper;
 import edu.ut.todocloud.dto.request.TagRequest;
 import edu.ut.todocloud.dto.response.TagResponse;
 import edu.ut.todocloud.model.Tag;
+import edu.ut.todocloud.model.Task;
+import edu.ut.todocloud.model.TaskTag;
 import edu.ut.todocloud.model.User;
 
 public class TagMapper {
@@ -21,5 +23,15 @@ public class TagMapper {
         tag.setColor(request.getColor());
         tag.setUser(user);
         return tag;
+    }
+
+    public static TaskTag toTaskTagEntity(Tag tag, Task task) {
+        if (tag == null || task == null) return null;
+
+        TaskTag taskTag = new TaskTag();
+        taskTag.setTag(tag);
+        taskTag.setTask(task);
+
+        return taskTag;
     }
 }

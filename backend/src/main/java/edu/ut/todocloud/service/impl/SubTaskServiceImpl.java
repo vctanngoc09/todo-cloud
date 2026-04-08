@@ -9,8 +9,11 @@ import edu.ut.todocloud.model.Task;
 import edu.ut.todocloud.repository.ISubTaskRepository;
 import edu.ut.todocloud.repository.ITaskRepository;
 import edu.ut.todocloud.service.ISubTaskService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SubTaskServiceImpl implements ISubTaskService {
@@ -36,6 +39,18 @@ public class SubTaskServiceImpl implements ISubTaskService {
 
         // 3. Trả về DTO Response để tránh vòng lặp JSON
         return subTaskMapper.toResponse(savedSubTask);
+    }
+
+    @Override
+    @Transactional
+    public void saveAllSubTasks(List<String> subtaskTitles, Task task) {
+        if (subtaskTitles == null || subtaskTitles.isEmpty()) return;
+
+        List<SubTask> subTaskList = subtaskTitles.stream()
+                .map(title -> subTaskMapper.toEntityFromTitle(title, task))
+                .toList();
+
+        subTaskRepository.saveAll(subTaskList);
     }
 
 }
