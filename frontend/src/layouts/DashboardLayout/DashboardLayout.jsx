@@ -19,13 +19,7 @@ import AddTagForm from "../../components/AddTagForm/AddTagForm";
 
 import { AuthService } from "../../services/auth.service";
 import { getTagsByUserId, createTag } from "../../api/tag";
-
-// Dummy list giữ nguyên
-const DUMMY_LISTS = [
-  { id: 1, nameList: "Personal", color: "#ff6b6b", count: 3 },
-  { id: 2, nameList: "Work", color: "#63e6be", count: 6 },
-  { id: 3, nameList: "List 1", color: "#ffd43b", count: 3 },
-];
+import { getAllLists,createList } from "../../api/list";
 
 function DashboardLayout() {
   const [active, setActive] = useState(IDTASKS.Today);
@@ -38,6 +32,7 @@ function DashboardLayout() {
 
   const user = AuthService.getUser();
   const userId = user?.id;
+  const [lists, setLists] = useState([]);
 
   const COMPONENTS = {
     [IDTASKS.Upcoming]: <Upcoming />,
@@ -73,6 +68,30 @@ function DashboardLayout() {
     } catch (error) {
       console.error("Lỗi tạo tag:", error);
       throw error;
+    }
+  };
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      try {
+        const res = await getAllLists();
+        setLists(res); // axiosInstance đã trả về res.data rồi
+      } catch (error) {
+        console.error("Lỗi lấy danh sách list:", error);
+      }
+    };
+    fetchLists();
+  }, []);
+
+  // 3. Hàm xử lý thêm List mới
+  const handleAddList = async (data) => {
+    try {
+      const newList = await createList(data);
+      setLists((prev) => [...prev, newList]); // Cập nhật UI ngay lập tức
+      setShowListForm(false);
+    } catch (error) {
+      alert("Lỗi khi tạo danh sách!");
+      console.error(error);
     }
   };
 
@@ -123,7 +142,8 @@ function DashboardLayout() {
         <div className={styles.section}>
           <p className={styles.sectionTitle}>Lists</p>
           <ul className={styles.list}>
-            {DUMMY_LISTS.map((list) => (
+            {/* 4. Render danh sách từ API */}
+            {lists.map((list) => (
               <li key={list.id} className={styles.listItem}>
                 <div className={styles.left}>
                   <span
@@ -132,7 +152,8 @@ function DashboardLayout() {
                   ></span>
                   {list.nameList}
                 </div>
-                <div className={styles.count}>{list.count}</div>
+                {/* Tạm thời để count là 0 hoặc tính toán sau */}
+                <div className={styles.count}>{list.tasks?.length || 0}</div>
               </li>
             ))}
 
@@ -150,7 +171,6 @@ function DashboardLayout() {
         <div className={styles.section}>
           <p className={styles.sectionTitle}>Tags</p>
           <div className={styles.tagContainer}>
-           
             {tags.map((tag) => (
               <span
                 key={tag.id}
@@ -188,14 +208,14 @@ function DashboardLayout() {
       {showListForm && (
         <AddListForm
           onClose={() => setShowListForm(false)}
-          onAdd={(data) => console.log(data)}
+          onAdd={handleAddList}
         />
       )}
 
       {showTagForm && (
         <AddTagForm
           onClose={() => setShowTagForm(false)}
-          onAdd={handleAddTag} 
+          onAdd={handleAddTag}
         />
       )}
     </div>
