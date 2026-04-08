@@ -3,17 +3,13 @@ import {
   faBars,
   faMagnifyingGlass,
   faPlus,
-  faChevronRight,
-  faAngleDoubleRight,
-  faCalendarDay,
-  faCalendarAlt,
-  faStickyNote,
   faGear,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./DashboardLayout.module.css";
-import { useState } from "react";
-import { IDTASKS, TASKS } from "../../constants/task"; // Giả định TASKS có icon & title
+import { useEffect, useState } from "react";
+
+import { IDTASKS, TASKS } from "../../constants/task";
 import Upcoming from "../../components/Upcoming/Upcoming";
 import Today from "../../components/Today/Today";
 import Calendar from "../../components/Calendar/Calendar";
@@ -21,21 +17,27 @@ import StickyWall from "../../components/StickyWall/StickyWall";
 import AddListForm from "../../components/AddListForm/AddListForm";
 import AddTagForm from "../../components/AddTagForm/AddTagForm";
 
-// Dữ liệu giả lập khớp với Schema Database của bạn
+import { AuthService } from "../../services/auth.service";
+import { getTagsByUserId, createTag } from "../../api/tag";
+
+// Dummy list giữ nguyên
 const DUMMY_LISTS = [
   { id: 1, nameList: "Personal", color: "#ff6b6b", count: 3 },
   { id: 2, nameList: "Work", color: "#63e6be", count: 6 },
   { id: 3, nameList: "List 1", color: "#ffd43b", count: 3 },
 ];
 
-const DUMMY_TAGS = [
-  { id: 1, nameTag: "Tag 1", color: "#d1fadf" },
-  { id: 2, nameTag: "Tag 2", color: "#fee4e2" },
-];
-
 function DashboardLayout() {
   const [active, setActive] = useState(IDTASKS.Today);
   const [isOpen, setIsOpen] = useState(true);
+
+  const [showListForm, setShowListForm] = useState(false);
+  const [showTagForm, setShowTagForm] = useState(false);
+
+  const [tags, setTags] = useState([]);
+
+  const user = AuthService.getUser();
+  const userId = user?.id;
 
   const COMPONENTS = {
     [IDTASKS.Upcoming]: <Upcoming />,
@@ -43,12 +45,42 @@ function DashboardLayout() {
     [IDTASKS.Calendar]: <Calendar />,
     [IDTASKS.StickyWall]: <StickyWall />,
   };
-  const [showListForm, setShowListForm] = useState(false);
-  const [showTagForm, setShowTagForm] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchTags = async () => {
+      try {
+        const res = await getTagsByUserId(userId);
+        setTags(res);
+      } catch (error) {
+        console.error("Lỗi lấy tags:", error);
+      }
+    };
+
+    fetchTags();
+  }, [userId]);
+
+  const handleAddTag = async (data) => {
+    try {
+      const newTag = await createTag({
+        ...data,
+        userId: userId,
+      });
+
+      // cập nhật UI ngay
+      setTags((prev) => [...prev, newTag]);
+    } catch (error) {
+      console.error("Lỗi tạo tag:", error);
+      throw error;
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       {/* SIDEBAR */}
       <aside className={`${styles.sidebar} ${!isOpen ? styles.hide : ""}`}>
+        {/* HEADER */}
         <div className={styles.header}>
           <p className={styles.menuText}>Menu</p>
           <div className={styles.iconMenu} onClick={() => setIsOpen(!isOpen)}>
@@ -56,6 +88,7 @@ function DashboardLayout() {
           </div>
         </div>
 
+        {/* SEARCH */}
         <div className={styles.search}>
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
@@ -64,14 +97,16 @@ function DashboardLayout() {
           <input type="text" placeholder="Search" />
         </div>
 
-        {/* SECTION: TASKS */}
+        {/* TASKS */}
         <div className={styles.section}>
           <p className={styles.sectionTitle}>Tasks</p>
           <ul className={styles.list}>
             {TASKS.map((obj) => (
               <li
                 key={obj.id}
-                className={`${styles.listItem} ${obj.id === active ? styles.active : ""}`}
+                className={`${styles.listItem} ${
+                  obj.id === active ? styles.active : ""
+                }`}
                 onClick={() => setActive(obj.id)}
               >
                 <div className={styles.left}>
@@ -84,7 +119,7 @@ function DashboardLayout() {
           </ul>
         </div>
 
-        {/* SECTION: LISTS */}
+        {/* LISTS */}
         <div className={styles.section}>
           <p className={styles.sectionTitle}>Lists</p>
           <ul className={styles.list}>
@@ -100,6 +135,7 @@ function DashboardLayout() {
                 <div className={styles.count}>{list.count}</div>
               </li>
             ))}
+
             <li
               className={styles.addItem}
               onClick={() => setShowListForm(true)}
@@ -110,11 +146,12 @@ function DashboardLayout() {
           </ul>
         </div>
 
-        {/* SECTION: TAGS */}
+        {/* TAGS */}
         <div className={styles.section}>
           <p className={styles.sectionTitle}>Tags</p>
           <div className={styles.tagContainer}>
-            {DUMMY_TAGS.map((tag) => (
+           
+            {tags.map((tag) => (
               <span
                 key={tag.id}
                 className={styles.tagItem}
@@ -123,6 +160,7 @@ function DashboardLayout() {
                 {tag.nameTag}
               </span>
             ))}
+
             <span
               className={styles.addTagBtn}
               onClick={() => setShowTagForm(true)}
@@ -132,7 +170,7 @@ function DashboardLayout() {
           </div>
         </div>
 
-        {/* BOTTOM NAV */}
+        {/* FOOTER */}
         <div className={styles.sidebarFooter}>
           <div className={styles.footerItem}>
             <FontAwesomeIcon icon={faGear} /> Settings
@@ -143,18 +181,21 @@ function DashboardLayout() {
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <main className={styles.main}>{COMPONENTS[active] || <Today />}</main>
+
+      {/* MODALS */}
       {showListForm && (
         <AddListForm
           onClose={() => setShowListForm(false)}
           onAdd={(data) => console.log(data)}
         />
       )}
+
       {showTagForm && (
         <AddTagForm
           onClose={() => setShowTagForm(false)}
-          onAdd={(data) => console.log(data)}
+          onAdd={handleAddTag} 
         />
       )}
     </div>

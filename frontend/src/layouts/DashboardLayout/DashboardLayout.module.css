@@ -159,8 +159,9 @@
   padding: 5px 12px;
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight:500;
   cursor: pointer;
+  color:white;
 }
 
 .addTagBtn {

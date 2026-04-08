@@ -1,22 +1,31 @@
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.3);
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   z-index: 1000;
+  padding: 16px;
+
+  /* blur nền cho xịn */
+  backdrop-filter: blur(4px);
 }
 
+/* CARD */
 .formCard {
   background: white;
   padding: 25px;
   border-radius: 15px;
+
   width: 320px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  max-width: 100%;
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+  animation: fadeIn 0.2s ease;
 }
 
 .formCard h3 {
@@ -24,15 +33,46 @@
   font-size: 18px;
 }
 
+/* INPUT */
 .formCard input {
   width: 100%;
   padding: 10px;
+
   border-radius: 8px;
   border: 1px solid #ddd;
+
   margin-bottom: 20px;
   outline: none;
+
+  transition: all 0.2s ease;
 }
 
+.formCard input:focus {
+  border-color: #ffd43b;
+  box-shadow: 0 0 0 2px rgba(255, 212, 59, 0.3);
+}
+
+/* TAG PREVIEW */
+.tagPreview {
+  margin-bottom: 15px;
+}
+
+.tagPreview p {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.tagPreview span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+
+  display: inline-block;
+}
+
+/* COLOR PICKER */
 .colorPicker {
   display: flex;
   gap: 10px;
@@ -41,29 +81,26 @@
 }
 
 .colorCircle {
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+
   cursor: pointer;
   border: 2px solid transparent;
+
+  transition: all 0.2s ease;
+}
+
+.colorCircle:hover {
+  transform: scale(1.1);
 }
 
 .activeColor {
   border-color: #333;
-  transform: scale(1.1);
+  transform: scale(1.15);
 }
 
-.tagPreview {
-    margin-bottom: 15px;
-}
-
-.tagPreview span {
-    padding: 5px 15px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
+/* BUTTONS */
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -73,12 +110,46 @@
 .actions button {
   padding: 8px 15px;
   border-radius: 8px;
+
   border: none;
   cursor: pointer;
   font-weight: 600;
+
+  transition: all 0.2s ease;
 }
 
+/* CANCEL */
+.cancelBtn {
+  background: #eee;
+}
+
+.cancelBtn:hover {
+  background: #ddd;
+}
+
+/* SUBMIT */
 .submitBtn {
-  background-color: #ffd43b; /* Màu vàng giống UI của bạn */
+  background-color: #ffd43b;
   color: #333;
+}
+
+.submitBtn:hover {
+  background-color: #fcc419;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
