@@ -19,7 +19,7 @@ import AddTagForm from "../../components/AddTagForm/AddTagForm";
 
 import { AuthService } from "../../services/auth.service";
 import { getTagsByUserId, createTag } from "../../api/tag";
-import { getAllLists,createList } from "../../api/list";
+import { getAllLists, createList } from "../../api/list";
 
 function DashboardLayout() {
   const [active, setActive] = useState(IDTASKS.Today);

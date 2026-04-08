@@ -1,8 +1,36 @@
 import styles from "./FormTask.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { getAllLists } from "../../api/list";
+import { useEffect, useState } from "react";
 
 function FormTask({ task, onClose }) {
+  const [lists, setLists] = useState([]);
+  // State để quản lý dữ liệu form
+  const [taskData, setTaskData] = useState({
+    title: task?.title || "",
+    description: task?.description || "",
+    listId: task?.todoList?.id || "", // Lưu ID của list được chọn
+    dueDate: task?.dueDate || "",
+  });
+  // 1. Lấy danh sách list khi mở form
+  useEffect(() => {
+    const fetchLists = async () => {
+      try {
+        const res = await getAllLists();
+        setLists(res);
+      } catch (error) {
+        console.error("Lỗi lấy danh sách list trong form:", error);
+      }
+    };
+    fetchLists();
+  }, []);
+
+  // Hàm xử lý thay đổi input
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTaskData((prev) => ({ ...prev, [name]: value }));
+  };
   return (
     <div className={styles.wrapper}>
       <div className={styles.form}>
@@ -16,32 +44,49 @@ function FormTask({ task, onClose }) {
           />
         </div>
 
-        
         <input
+          name="title"
           className={styles.inputMain}
           placeholder="Task name"
-          defaultValue={task?.title || ""}
+          value={taskData.title}
+          onChange={handleChange}
         />
 
         <textarea
+          name="description"
           className={styles.textarea}
           placeholder="Description"
-          defaultValue={task?.description || ""}
+          value={taskData.description}
+          onChange={handleChange}
         />
 
-        {/* Cấu trúc hàng ngang cho List, Date, Tags */}
+        {/* 2. Render danh sách List từ Backend vào <select> */}
         <div className={styles.row}>
           <label>List</label>
-          <select className={styles.select}>
-            <option>Personal</option>
-            <option>Work</option>
-            <option>Study</option>
+          <select
+            name="listId"
+            className={styles.select}
+            value={taskData.listId}
+            onChange={handleChange}
+          >
+            <option value="">None</option>
+            {lists.map((list) => (
+              <option key={list.id} value={list.id}>
+                {list.nameList}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className={styles.row}>
           <label>Due date</label>
-          <input type="date" className={styles.dateInput} />
+          <input
+            name="dueDate"
+            type="date"
+            className={styles.dateInput}
+            value={taskData.dueDate}
+            onChange={handleChange}
+          />
         </div>
 
         <div className={styles.row}>
@@ -70,7 +115,12 @@ function FormTask({ task, onClose }) {
         {/* Footer Buttons */}
         <div className={styles.actions}>
           <button className={styles.deleteBtn}>Delete Task</button>
-          <button className={styles.saveBtn}>Save changes</button>
+          <button
+            className={styles.saveBtn}
+            onClick={() => console.log("Dữ liệu gửi lên BE:", taskData)}
+          >
+            Save changes
+          </button>
         </div>
       </div>
     </div>
