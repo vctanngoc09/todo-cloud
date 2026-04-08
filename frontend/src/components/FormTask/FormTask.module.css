@@ -1,119 +1,192 @@
 .wrapper {
-  width: 350px;
+  width: 360px;
   margin-left: 20px;
   height: 100%;
 }
 
+/* FORM */
 .form {
   display: flex;
-  background-color: rgb(248, 248, 248);
-  border-radius: 20px;
-  padding: 18px;
-  height: 100%;
-  gap: 10px;
   flex-direction: column;
+  gap: 12px;
+
+  background: #f9fafb;
+  border-radius: 20px;
+  padding: 20px;
+  height: 100%;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-/* Header */
+/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: 500;
-  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .header svg {
   cursor: pointer;
-  color: #888;
+  color: #999;
+  transition: 0.2s;
 }
 
-/* Input */
+.header svg:hover {
+  color: #333;
+  transform: scale(1.1);
+}
+
+/* INPUT */
 .inputMain {
   width: 100%;
   padding: 12px;
-  border-radius: 8px;
+
+  border-radius: 10px;
   border: 1px solid #eee;
   background-color: #fff;
+
   font-size: 14px;
   outline: none;
+  transition: 0.2s;
 }
 
-/* Textarea */
+.inputMain:focus {
+  border-color: #f5c542;
+  box-shadow: 0 0 0 2px rgba(245, 197, 66, 0.2);
+}
+
+/* TEXTAREA */
 .textarea {
   width: 100%;
-  height: 120px;
+  height: 110px;
   padding: 12px;
-  border-radius: 8px;
+
+  border-radius: 10px;
   border: 1px solid #eee;
   background-color: #fff;
+
   resize: none;
   outline: none;
+  transition: 0.2s;
 }
 
-/* Row alignment (List, Date, Tags) */
+.textarea:focus {
+  border-color: #f5c542;
+  box-shadow: 0 0 0 2px rgba(245, 197, 66, 0.2);
+}
+
+/* ROW */
 .row {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  gap: 10px;
 }
 
 .row label {
-  width: 100px;
+  min-width: 90px;
   font-weight: 500;
-  color: #555;
-  font-size: 16px;
+  color: #666;
+  font-size: 14px;
 }
 
+/* SELECT + DATE */
 .select,
 .dateInput {
-  padding: 6px 12px;
-  border-radius: 6px;
+  flex: 1;
+  padding: 8px 10px;
+
+  border-radius: 8px;
   border: 1px solid #eee;
-  background-color: #f0f0f0;
+
+  background-color: #fff;
   color: #444;
   outline: none;
+
+  transition: 0.2s;
 }
 
-/* Tags */
+.select:focus,
+.dateInput:focus {
+  border-color: #f5c542;
+}
+
+/* ===================== */
+/* TAGS */
+/* ===================== */
+
 .tagGroup {
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  grid-template-rows: auto;
   gap: 8px;
-  align-items: center;
 }
 
 .tagBadge {
-  background-color: #d1edf2;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+  display: inline-flex;
+  align-items: center;
 }
 
+/* hover nhẹ */
+.tagBadge:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* tag được chọn */
+.activeTag {
+  outline: 1px solid #121212;
+  transform: scale(1.05);
+}
+
+/* button add tag */
 .addTagBtn {
-  background-color: #eee;
+  background-color: #f1f3f5;
   border: none;
+
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: 999px;
+
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   color: #666;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  transition: 0.2s;
 }
 
 .addTagBtn:hover {
-  background-color: #d1edf2;
+  background-color: #e9ecef;
 }
 
-/* Subtasks */
+/* ===================== */
+/* SUBTASK */
+/* ===================== */
+
 .subtasksSection {
   margin-top: 10px;
   flex-grow: 1;
 }
 
 .subtaskTitle {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .addSubtask {
@@ -121,21 +194,23 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #8892a0;
+
+  color: #868e96;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+
   font-size: 14px;
   background: none;
-  outline: none;
-  padding: 10px 5px 10px 0px;
   border: none;
-  border-bottom: 1px solid #eee;
+
+  padding: 10px;
   border-radius: 10px;
+
+  transition: 0.2s;
 }
 
 .addSubtask:hover {
-  background-color: whitesmoke;
-  border-radius: 8px;
+  background-color: #f1f3f5;
 }
 
 .subtaskItem {
@@ -151,27 +226,48 @@
   accent-color: #f5c542;
 }
 
-/* Buttons */
+/* ===================== */
+/* BUTTONS */
+/* ===================== */
+
 .actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .deleteBtn {
-  padding: 10px 30px;
+  padding: 10px 20px;
+
   border-radius: 8px;
   border: 1px solid #eee;
   background-color: #fff;
+
   cursor: pointer;
   font-weight: 600;
+
+  transition: 0.2s;
 }
 
+.deleteBtn:hover {
+  background-color: #f8f9fa;
+}
+
+/* save button */
 .saveBtn {
-  padding: 10px 30px;
+  padding: 10px 20px;
+
   border-radius: 8px;
   border: none;
+
   background-color: #f5c542;
   cursor: pointer;
   font-weight: 600;
+
+  transition: 0.2s;
+}
+
+.saveBtn:hover {
+  background-color: #fcc419;
+  transform: translateY(-1px);
 }
