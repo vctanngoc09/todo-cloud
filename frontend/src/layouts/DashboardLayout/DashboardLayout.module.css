@@ -3,27 +3,34 @@
   background-color: var(--p-white);
   padding: 20px;
   display: flex;
-  height: 100vh;
-  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  gap: 35px; /* Khoảng cách giữa sidebar và main */
 }
 
 .sidebar {
-  display: flex;
-  flex-direction: column;
   width: 350px;
   background-color: rgb(248, 248, 248);
   border-radius: 20px;
-  padding: 18px;
-  gap: 15px;
-  height: 100%;
+  padding: 24px 20px; /* Tăng padding trên dưới */
   transition: transform 0.3s ease;
-  position: relative;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  align-self: flex-start;
+}
+
+.sidebarContent {
+  display: flex;
+  flex-direction: column;
+  gap: 28px; /* Khoảng cách lớn giữa các section chính */
 }
 
 .hide {
-  position: absolute;
-  left: 0;
+  position: fixed;
+  left: 20px;
   transform: translateX(-90%);
+  top: 20px;
 }
 
 /* --- HEADER & SEARCH --- */
@@ -32,35 +39,51 @@
   justify-content: space-between;
   align-items: center;
   position: relative;
+  margin-bottom: 0; /* Không cần margin vì đã có gap của sidebarContent */
 }
 
 .menuText {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: 600;
   margin: 0;
+  color: #1a1a1a;
 }
 
 .iconMenu {
   position: absolute;
   right: -11%;
   padding: 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   z-index: 10;
   background-color: rgb(234, 234, 234);
-  box-shadow: 1px 2px 3px rgb(208, 208, 208);
+  box-shadow: 1px 2px 4px rgb(208, 208, 208);
+  transition: all 0.2s ease;
+}
+
+.iconMenu:hover {
+  background-color: rgb(220, 220, 220);
+  transform: scale(1.05);
 }
 
 .search {
   display: flex;
   align-items: center;
-  border: var(--p-solid-boder);
-  border-radius: 8px;
-  background-color: rgba(244, 244, 244, 1);
+  border: 1px solid rgb(230, 230, 230);
+  border-radius: 12px;
+  background-color: rgb(244, 244, 244);
+  transition: all 0.2s ease;
+  margin: 10px 0px;
+}
+
+.search:focus-within {
+  background-color: white;
+  border-color: #ffd43b;
+  box-shadow: 0 0 0 2px rgba(255, 212, 59, 0.1);
 }
 
 .searchIcon {
-  font-size: var(--p-font-size);
+  font-size: 16px;
   margin: 0 15px;
   color: rgb(151, 151, 151);
 }
@@ -69,31 +92,36 @@
   flex: 1;
   border: none;
   outline: none;
-  padding: 10px;
+  padding: 12px 10px 12px 0;
   background: transparent;
   font-weight: 500;
-  font-size: var(--p-font-size);
+  font-size: 14px;
 }
 
 /* --- SECTIONS (TASKS, LISTS) --- */
 .section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px; /* Khoảng cách giữa title và list */
 }
 
 .sectionTitle {
-  font-size: var(--p-font-size);
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  color: rgb(100, 100, 100);
-  margin-bottom: 5px;
+  color: rgb(120, 120, 120);
+  margin: 0;
+  letter-spacing: 0.5px;
+  padding-left: 8px;
 }
 
 .list {
   padding: 0;
   margin: 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Khoảng cách nhỏ giữa các item trong list */
 }
 
 .listItem {
@@ -101,14 +129,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 8px;
-  padding: 10px 18px;
+  border-radius: 10px;
+  padding: 10px 12px;
   font-weight: 500;
   color: rgb(61, 59, 59);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-.listItem:hover, .active {
+.listItem:hover,
+.active {
   background-color: rgb(234, 234, 234);
 }
 
@@ -116,25 +145,63 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.left span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
 }
 
 .iconWrapper {
   width: 20px;
   text-align: center;
   color: rgb(141, 141, 141);
+  flex-shrink: 0;
+  font-size: 16px;
 }
 
 .colorBox {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .count {
   background-color: rgb(235, 235, 235);
-  padding: 1px 10px;
-  border-radius: 5px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: rgb(80, 80, 80);
+}
+
+.showMoreBtn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
   font-size: 12px;
+  font-weight: 500;
+  color: rgb(100, 100, 100);
+  background-color: rgb(240, 240, 240);
+  border-radius: 10px;
+  margin-top: 4px;
+  transition: all 0.2s ease;
+}
+
+.showMoreBtn:hover {
+  background-color: rgb(230, 230, 230);
+  color: #333;
+  transform: translateY(-1px);
 }
 
 .addItem {
@@ -142,68 +209,126 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 18px;
-  font-size: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 500;
   color: rgb(120, 120, 120);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.addItem:hover {
+  background-color: rgb(234, 234, 234);
+  color: #ffd43b;
 }
 
 /* --- TAGS --- */
 .tagContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 10px;
+  gap: 10px; /* Khoảng cách giữa các tag */
+  padding: 0 4px;
 }
 
 .tagItem {
-  padding: 5px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight:500;
+  padding: 6px 14px;
+  border-radius: 20px; /* Bo tròn hơn */
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-  color:white;
+  color: white;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.addTagBtn {
-  padding: 5px 12px;
-  border-radius: 8px;
+.tagItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.moreTagsBtn,
+.showLessTagsBtn {
+  padding: 6px 14px;
+  border-radius: 20px;
   background-color: rgb(234, 234, 234);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   color: rgb(100, 100, 100);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.moreTagsBtn:hover,
+.showLessTagsBtn:hover {
+  background-color: rgb(220, 220, 220);
+  transform: translateY(-1px);
+}
+
+.addTagBtn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background-color: rgb(234, 234, 234);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: rgb(100, 100, 100);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.addTagBtn:hover {
+  background-color: rgb(220, 220, 220);
+  color: #ffd43b;
+  transform: translateY(-1px);
 }
 
 /* --- FOOTER --- */
 .sidebarFooter {
-  margin-top: auto;
+  margin-top: 8px;
+  padding-top: 8px;
   display: flex;
   flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid rgb(230, 230, 230);
 }
 
 .footerItem {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 18px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 500;
-  transition: 0.3s;
+  font-size: 14px;
+  color: rgb(80, 80, 80);
+  transition: all 0.2s ease;
 }
 
 .footerItem:hover {
   background-color: rgb(234, 234, 234);
+  color: #ffd43b;
 }
 
-/* --- MODAL FORMS (CSS Gộp vào) --- */
+.footerItem svg {
+  font-size: 16px;
+}
+
+/* --- MODAL FORMS --- */
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -212,16 +337,30 @@
 
 .formCard {
   background: white;
-  padding: 24px;
-  border-radius: 20px;
-  width: 320px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  padding: 28px;
+  border-radius: 24px;
+  width: 340px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .formCard h3 {
   margin-top: 0;
   margin-bottom: 20px;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 .formCard input {
@@ -230,44 +369,70 @@
   margin-bottom: 20px;
   border: 1px solid #eee;
   background-color: #f9f9f9;
-  border-radius: 10px;
+  border-radius: 12px;
   box-sizing: border-box;
   outline: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.formCard input:focus {
+  border-color: #ffd43b;
+  background-color: white;
+  box-shadow: 0 0 0 2px rgba(255, 212, 59, 0.1);
 }
 
 .colorPicker {
   display: flex;
-  gap: 12px;
-  margin-bottom: 25px;
+  gap: 14px;
+  margin-bottom: 28px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .colorCircle {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   cursor: pointer;
   border: 3px solid transparent;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.colorCircle:hover {
+  transform: scale(1.1);
 }
 
 .activeColor {
-  border-color: #ddd;
-  transform: scale(1.2);
+  border-color: #ffd43b;
+  transform: scale(1.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
 .actions button {
   border: none;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.actions button:first-child {
+  background-color: rgb(240, 240, 240);
+  color: #666;
+}
+
+.actions button:first-child:hover {
+  background-color: rgb(230, 230, 230);
 }
 
 .submitBtn {
@@ -275,11 +440,17 @@
   color: #333;
 }
 
+.submitBtn:hover {
+  background: #ffce2a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 212, 59, 0.3);
+}
+
 /* --- MAIN CONTENT --- */
 .main {
   flex: 1;
-  margin-left: 35px;
   background-color: white;
   border-radius: 20px;
-  padding: 20px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
