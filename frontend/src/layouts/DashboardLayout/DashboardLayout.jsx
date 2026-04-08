@@ -5,6 +5,8 @@ import {
   faPlus,
   faGear,
   faSignOutAlt,
+  faChevronDown,
+  faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./DashboardLayout.module.css";
 import { useEffect, useState } from "react";
@@ -29,10 +31,13 @@ function DashboardLayout() {
   const [showTagForm, setShowTagForm] = useState(false);
 
   const [tags, setTags] = useState([]);
+  const [lists, setLists] = useState([]);
+
+  const [showAllLists, setShowAllLists] = useState(false);
+  const [showAllTags, setShowAllTags] = useState(false);
 
   const user = AuthService.getUser();
   const userId = user?.id;
-  const [lists, setLists] = useState([]);
 
   const COMPONENTS = {
     [IDTASKS.Upcoming]: <Upcoming />,
@@ -40,6 +45,13 @@ function DashboardLayout() {
     [IDTASKS.Calendar]: <Calendar />,
     [IDTASKS.StickyWall]: <StickyWall />,
   };
+
+  const LISTS_LIMIT = 4;
+  const TAGS_LIMIT = 8;
+
+  const visibleLists = showAllLists ? lists : lists.slice(0, LISTS_LIMIT);
+  const visibleTags = showAllTags ? tags : tags.slice(0, TAGS_LIMIT);
+  const hiddenTagsCount = tags.length - TAGS_LIMIT;
 
   useEffect(() => {
     if (!userId) return;
@@ -49,7 +61,7 @@ function DashboardLayout() {
         const res = await getTagsByUserId(userId);
         setTags(res);
       } catch (error) {
-        console.error("Lỗi lấy tags:", error);
+        console.error("Lỗi lấy nhãn:", error);
       }
     };
 
@@ -62,11 +74,9 @@ function DashboardLayout() {
         ...data,
         userId: userId,
       });
-
-      // cập nhật UI ngay
       setTags((prev) => [...prev, newTag]);
     } catch (error) {
-      console.error("Lỗi tạo tag:", error);
+      console.error("Lỗi tạo nhãn:", error);
       throw error;
     }
   };
@@ -75,19 +85,18 @@ function DashboardLayout() {
     const fetchLists = async () => {
       try {
         const res = await getAllLists();
-        setLists(res); // axiosInstance đã trả về res.data rồi
+        setLists(res);
       } catch (error) {
-        console.error("Lỗi lấy danh sách list:", error);
+        console.error("Lỗi lấy danh sách:", error);
       }
     };
     fetchLists();
   }, []);
 
-  // 3. Hàm xử lý thêm List mới
   const handleAddList = async (data) => {
     try {
       const newList = await createList(data);
-      setLists((prev) => [...prev, newList]); // Cập nhật UI ngay lập tức
+      setLists((prev) => [...prev, newList]);
       setShowListForm(false);
     } catch (error) {
       alert("Lỗi khi tạo danh sách!");
@@ -113,12 +122,12 @@ function DashboardLayout() {
             icon={faMagnifyingGlass}
             className={styles.searchIcon}
           />
-          <input type="text" placeholder="Search" />
+          <input type="text" placeholder="Tìm kiếm" />
         </div>
 
         {/* TASKS */}
         <div className={styles.section}>
-          <p className={styles.sectionTitle}>Tasks</p>
+          <p className={styles.sectionTitle}>Công việc</p>
           <ul className={styles.list}>
             {TASKS.map((obj) => (
               <li
@@ -140,10 +149,9 @@ function DashboardLayout() {
 
         {/* LISTS */}
         <div className={styles.section}>
-          <p className={styles.sectionTitle}>Lists</p>
+          <p className={styles.sectionTitle}>Danh sách</p>
           <ul className={styles.list}>
-            {/* 4. Render danh sách từ API */}
-            {lists.map((list) => (
+            {visibleLists.map((list) => (
               <li key={list.id} className={styles.listItem}>
                 <div className={styles.left}>
                   <span
@@ -152,26 +160,41 @@ function DashboardLayout() {
                   ></span>
                   {list.nameList}
                 </div>
-                {/* Tạm thời để count là 0 hoặc tính toán sau */}
                 <div className={styles.count}>{list.tasks?.length || 0}</div>
               </li>
             ))}
+
+            {lists.length > LISTS_LIMIT && (
+              <li
+                className={styles.showMoreBtn}
+                onClick={() => setShowAllLists(!showAllLists)}
+              >
+                <FontAwesomeIcon
+                  icon={showAllLists ? faChevronUp : faChevronDown}
+                />
+                <span>
+                  {showAllLists
+                    ? "Thu gọn"
+                    : `Xem thêm ${lists.length - LISTS_LIMIT}`}
+                </span>
+              </li>
+            )}
 
             <li
               className={styles.addItem}
               onClick={() => setShowListForm(true)}
             >
               <FontAwesomeIcon icon={faPlus} />
-              <span>Add New List</span>
+              <span>Thêm danh sách</span>
             </li>
           </ul>
         </div>
 
         {/* TAGS */}
         <div className={styles.section}>
-          <p className={styles.sectionTitle}>Tags</p>
+          <p className={styles.sectionTitle}>Nhãn</p>
           <div className={styles.tagContainer}>
-            {tags.map((tag) => (
+            {visibleTags.map((tag) => (
               <span
                 key={tag.id}
                 className={styles.tagItem}
@@ -181,11 +204,29 @@ function DashboardLayout() {
               </span>
             ))}
 
+            {!showAllTags && hiddenTagsCount > 0 && (
+              <span
+                className={styles.moreTagsBtn}
+                onClick={() => setShowAllTags(true)}
+              >
+                +{hiddenTagsCount} nhãn
+              </span>
+            )}
+
+            {showAllTags && tags.length > TAGS_LIMIT && (
+              <span
+                className={styles.showLessTagsBtn}
+                onClick={() => setShowAllTags(false)}
+              >
+                Thu gọn
+              </span>
+            )}
+
             <span
               className={styles.addTagBtn}
               onClick={() => setShowTagForm(true)}
             >
-              <FontAwesomeIcon icon={faPlus} /> Add Tag
+              <FontAwesomeIcon icon={faPlus} /> Thêm nhãn
             </span>
           </div>
         </div>
@@ -193,10 +234,7 @@ function DashboardLayout() {
         {/* FOOTER */}
         <div className={styles.sidebarFooter}>
           <div className={styles.footerItem}>
-            <FontAwesomeIcon icon={faGear} /> Settings
-          </div>
-          <div className={styles.footerItem}>
-            <FontAwesomeIcon icon={faSignOutAlt} /> Sign out
+            <FontAwesomeIcon icon={faSignOutAlt} /> Đăng xuất
           </div>
         </div>
       </aside>
