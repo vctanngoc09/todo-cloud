@@ -1,9 +1,12 @@
+/* --- LAYOUT CHÍNH --- */
 .wrapper {
   background-color: var(--p-white);
   padding: 20px;
   display: flex;
   height: 100vh;
+  font-family: 'Inter', sans-serif;
 }
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -14,111 +17,268 @@
   gap: 15px;
   height: 100%;
   transition: transform 0.3s ease;
+  position: relative;
 }
+
 .hide {
   position: absolute;
   left: 0;
-
   transform: translateX(-90%);
 }
-/* header */
-.sidebar .header {
+
+/* --- HEADER & SEARCH --- */
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.3s ease;
   position: relative;
 }
-.sidebar .header p {
+
+.menuText {
   font-size: 20px;
   font-weight: 500;
+  margin: 0;
 }
-.sidebar .header .iconMenu {
-  position:absolute;
-  right:-11%;
+
+.iconMenu {
+  position: absolute;
+  right: -11%;
   padding: 10px;
   border-radius: 6px;
-
   cursor: pointer;
   z-index: 10;
   background-color: rgb(234, 234, 234);
   box-shadow: 1px 2px 3px rgb(208, 208, 208);
 }
-.sidebar .header .iconMenu svg {
-  font-weight: 500;
-}
-/* .sidebar .header .hide {
-  right: -40%;
-} */
-/* Tìm kiếm */
+
 .search {
   display: flex;
   align-items: center;
   border: var(--p-solid-boder);
   border-radius: 8px;
+  background-color: rgba(244, 244, 244, 1);
 }
-.search svg {
+
+.searchIcon {
   font-size: var(--p-font-size);
   margin: 0 15px;
   color: rgb(151, 151, 151);
 }
+
 .search input {
   flex: 1;
   border: none;
   outline: none;
   padding: 10px;
-  background-color: rgba(244, 244, 244, 1);
+  background: transparent;
   font-weight: 500;
   font-size: var(--p-font-size);
-  border-radius: 8px;
 }
+
+/* --- SECTIONS (TASKS, LISTS) --- */
 .section {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.section .title {
+
+.sectionTitle {
   font-size: var(--p-font-size);
-  font-weight: 500;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgb(100, 100, 100);
+  margin-bottom: 5px;
 }
-.section ul {
-  padding: 0 10px;
+
+.list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
-.section ul li {
+
+.listItem {
   cursor: pointer;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border-radius: 8px;
   padding: 10px 18px;
   font-weight: 500;
   color: rgb(61, 59, 59);
   transition: all 0.3s ease;
 }
-.section ul li:hover {
+
+.listItem:hover, .active {
   background-color: rgb(234, 234, 234);
 }
-.section ul .active {
-  font-weight: 700;
-  color: rgb(47, 46, 46);
-  background-color: rgb(234, 234, 234);
-}
-.section ul li .left {
+
+.left {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 12px;
 }
-.section ul li .left svg {
+
+.iconWrapper {
+  width: 20px;
+  text-align: center;
   color: rgb(141, 141, 141);
 }
-.section ul li .count {
+
+.colorBox {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+}
+
+.count {
   background-color: rgb(235, 235, 235);
   padding: 1px 10px;
-  border-radius: 3px;
+  border-radius: 5px;
+  font-size: 12px;
 }
-.section ul .active .count {
-  background-color: rgb(248, 248, 248);
+
+.addItem {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  color: rgb(120, 120, 120);
 }
+
+/* --- TAGS --- */
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.tagItem {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addTagBtn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  background-color: rgb(234, 234, 234);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: rgb(100, 100, 100);
+}
+
+/* --- FOOTER --- */
+.sidebarFooter {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.footerItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.footerItem:hover {
+  background-color: rgb(234, 234, 234);
+}
+
+/* --- MODAL FORMS (CSS Gộp vào) --- */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.formCard {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.formCard h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.formCard input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.colorPicker {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.colorCircle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.activeColor {
+  border-color: #ddd;
+  transform: scale(1.2);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.actions button {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.submitBtn {
+  background: #ffd43b;
+  color: #333;
+}
+
+/* --- MAIN CONTENT --- */
 .main {
   flex: 1;
   margin-left: 35px;
+  background-color: white;
+  border-radius: 20px;
+  padding: 20px;
 }

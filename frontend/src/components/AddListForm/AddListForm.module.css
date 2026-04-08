@@ -1,0 +1,84 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.formCard {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 320px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.formCard h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.formCard input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+.colorPicker {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.colorCircle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.activeColor {
+  border-color: #333;
+  transform: scale(1.1);
+}
+
+.tagPreview {
+    margin-bottom: 15px;
+}
+
+.tagPreview span {
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.actions button {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.submitBtn {
+  background-color: #ffd43b; /* Màu vàng giống UI của bạn */
+  color: #333;
+}
