@@ -11,6 +11,9 @@ public class TaskResponse {
     private String description;
     private boolean completed;
     private LocalDateTime dueDate;
-    private Long listId;    // Trả về ID thôi cho nhẹ
+    private Long listId;
+    private String nameList; // Thêm tên List để hiển thị
+    private String listColor; // Thêm màu sắc của List
+    private int subtaskCount;
     private String username;
 }

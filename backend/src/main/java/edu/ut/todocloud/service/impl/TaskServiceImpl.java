@@ -1,6 +1,7 @@
 package edu.ut.todocloud.service.impl;
 
 import edu.ut.todocloud.dto.request.TaskRequest;
+import edu.ut.todocloud.dto.response.TaskResponse;
 import edu.ut.todocloud.mapper.TaskMapper;
 import edu.ut.todocloud.model.*;
 import edu.ut.todocloud.repository.ITaskRepository;
@@ -14,6 +15,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements ITaskService {
@@ -60,5 +66,24 @@ public class TaskServiceImpl implements ITaskService {
         tagService.assignTagsToTask(taskRequest.getTagIds(), savedTask);
 
         return savedTask;
+    }
+
+
+    @Override
+    public List<TaskResponse> getTodayTasks() {
+        // 1. Lấy User hiện tại
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 2. Xác định mốc thời gian ngày hôm nay (00:00:00 -> 23:59:59)
+        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+
+        // 3. Truy vấn và Map sang Response
+        return taskRepository.findByUserAndDueDateBetween(user, startOfDay, endOfDay)
+                .stream()
+                .map(taskMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

@@ -1,7 +1,8 @@
 import styles from "./Today.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormTask from "../FormTask/FormTask";
+import { getTodayTasks } from "../../api/task";
 import {
   faAngleRight,
   faBusinessTime,
@@ -14,12 +15,40 @@ import {
 function Today() {
   const [showForm, setShowForm] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [tasks, setTasks] = useState([]); // State lưu danh sách task
+  const [loading, setLoading] = useState(true);
+
+  // Hàm fetch dữ liệu
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const data = await getTodayTasks();
+      setTasks(data);
+    } catch (error) {
+      console.error("Lỗi khi lấy task hôm nay:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Gọi API khi load trang
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  // Hàm định dạng ngày tháng hiển thị (VD: 2026-04-09 -> 09-04-26)
+  const formatDate = (dateString) => {
+    if (!dateString) return "No date";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN");
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>
         <div className={styles.header}>
           <h1>Today</h1>
-          <span className={styles.count}>5</span>
+          <span className={styles.count}>{tasks.length}</span>
         </div>
 
         <button
@@ -34,216 +63,76 @@ function Today() {
         </button>
 
         <div className={styles.list}>
-          <button
-            className={styles.item}
-            onClick={() => {
-              setShowForm(true);
-              setSelectedTask({
-                title: "Consult accountant",
-                description: "",
-              });
-            }}
-          >
-            <div className={styles.itemtop}>
-              <div className={styles.itemleft}>
-                <input type="checkbox" className={styles.checkbox} />
-                <span className={styles.title}>Research content ideas</span>
-              </div>
-              <FontAwesomeIcon icon={faAngleRight} className={styles.icon} />
-            </div>
-            <div className={styles.itembottom}>
-              {/* Phần ngày tháng */}
-              <div className={styles.signature}>
-                <FontAwesomeIcon
-                  icon={faBusinessTime}
-                  className={styles.icondeadline}
-                />
-                <span>22-03-22</span>
-              </div>
+          {loading ? (
+            <p>Đang tải công việc...</p>
+          ) : tasks.length > 0 ? (
+            tasks.map((task) => (
+              <button
+                key={task.id}
+                className={styles.item}
+                onClick={() => {
+                  setSelectedTask(task);
+                  setShowForm(true);
+                }}
+              >
+                <div className={styles.itemtop}>
+                  <div className={styles.itemleft}>
+                    <input
+                      type="checkbox"
+                      className={styles.checkbox}
+                      defaultChecked={task.completed}
+                      onClick={(e) => e.stopPropagation()} // Ngăn việc mở form khi bấm checkbox
+                    />
+                    <span className={styles.title}>{task.title}</span>
+                  </div>
+                  <FontAwesomeIcon
+                    icon={faAngleRight}
+                    className={styles.icon}
+                  />
+                </div>
 
-              {/* Phần Subtasks */}
-              <div className={styles.signature}>
-                <span className={styles.badge}>1</span>
-                <span>Subtasks</span>
-              </div>
+                <div className={styles.itembottom}>
+                  {/* Ngày tháng */}
+                  <div className={styles.signature}>
+                    <FontAwesomeIcon
+                      icon={faBusinessTime}
+                      className={styles.icondeadline}
+                    />
+                    <span>{formatDate(task.dueDate)}</span>
+                  </div>
 
-              {/* Phần Category */}
-              <div className={styles.signature}>
-                <div className={styles.colorBox}></div>
-                <span>Personal</span>
-              </div>
-            </div>
-          </button>
+                  {/* Số lượng Subtasks */}
+                  <div className={styles.signature}>
+                    <span className={styles.badge}>{task.subtaskCount}</span>
+                    <span>Subtasks</span>
+                  </div>
 
-          <button
-            className={styles.item}
-            onClick={() => {
-              setShowForm(true);
-              setSelectedTask({
-                title: "Consult accountant",
-                description: "",
-              });
-            }}
-          >
-            <div className={styles.itemtop}>
-              <div className={styles.itemleft}>
-                <input type="checkbox" className={styles.checkbox} />
-                <span className={styles.title}>Research content ideas</span>
-              </div>
-              <FontAwesomeIcon icon={faAngleRight} className={styles.icon} />
-            </div>
-            <div className={styles.itembottom}>
-              {/* Phần ngày tháng */}
-              <div className={styles.signature}>
-                <FontAwesomeIcon
-                  icon={faBusinessTime}
-                  className={styles.icondeadline}
-                />
-                <span>22-03-22</span>
-              </div>
-
-              {/* Phần Subtasks */}
-              <div className={styles.signature}>
-                <span className={styles.badge}>1</span>
-                <span>Subtasks</span>
-              </div>
-
-              {/* Phần Category */}
-              <div className={styles.signature}>
-                <div className={styles.colorBox}></div>
-                <span>Personal</span>
-              </div>
-            </div>
-          </button>
-
-          <button
-            className={styles.item}
-            onClick={() => {
-              setShowForm(true);
-              setSelectedTask({
-                title: "Consult accountant",
-                description: "",
-              });
-            }}
-          >
-            <div className={styles.itemtop}>
-              <div className={styles.itemleft}>
-                <input type="checkbox" className={styles.checkbox} />
-                <span className={styles.title}>Research content ideas</span>
-              </div>
-              <FontAwesomeIcon icon={faAngleRight} className={styles.icon} />
-            </div>
-            <div className={styles.itembottom}>
-              {/* Phần ngày tháng */}
-              <div className={styles.signature}>
-                <FontAwesomeIcon
-                  icon={faBusinessTime}
-                  className={styles.icondeadline}
-                />
-                <span>22-03-22</span>
-              </div>
-
-              {/* Phần Subtasks */}
-              <div className={styles.signature}>
-                <span className={styles.badge}>1</span>
-                <span>Subtasks</span>
-              </div>
-
-              {/* Phần Category */}
-              <div className={styles.signature}>
-                <div className={styles.colorBox}></div>
-                <span>Personal</span>
-              </div>
-            </div>
-          </button>
-
-          <button
-            className={styles.item}
-            onClick={() => {
-              setShowForm(true);
-              setSelectedTask({
-                title: "Consult accountant",
-                description: "",
-              });
-            }}
-          >
-            <div className={styles.itemtop}>
-              <div className={styles.itemleft}>
-                <input type="checkbox" className={styles.checkbox} />
-                <span className={styles.title}>Research content ideas</span>
-              </div>
-              <FontAwesomeIcon icon={faAngleRight} className={styles.icon} />
-            </div>
-            <div className={styles.itembottom}>
-              {/* Phần ngày tháng */}
-              <div className={styles.signature}>
-                <FontAwesomeIcon
-                  icon={faBusinessTime}
-                  className={styles.icondeadline}
-                />
-                <span>22-03-22</span>
-              </div>
-
-              {/* Phần Subtasks */}
-              <div className={styles.signature}>
-                <span className={styles.badge}>1</span>
-                <span>Subtasks</span>
-              </div>
-
-              {/* Phần Category */}
-              <div className={styles.signature}>
-                <div className={styles.colorBox}></div>
-                <span>Personal</span>
-              </div>
-            </div>
-          </button>
-
-          <button
-            className={styles.item}
-            onClick={() => {
-              setShowForm(true);
-              setSelectedTask({
-                title: "Consult accountant",
-                description: "",
-              });
-            }}
-          >
-            <div className={styles.itemtop}>
-              <div className={styles.itemleft}>
-                <input type="checkbox" className={styles.checkbox} />
-                <span className={styles.title}>Research content ideas</span>
-              </div>
-              <FontAwesomeIcon icon={faAngleRight} className={styles.icon} />
-            </div>
-            <div className={styles.itembottom}>
-              {/* Phần ngày tháng */}
-              <div className={styles.signature}>
-                <FontAwesomeIcon
-                  icon={faBusinessTime}
-                  className={styles.icondeadline}
-                />
-                <span>22-03-22</span>
-              </div>
-
-              {/* Phần Subtasks */}
-              <div className={styles.signature}>
-                <span className={styles.badge}>1</span>
-                <span>Subtasks</span>
-              </div>
-
-              {/* Phần Category */}
-              <div className={styles.signature}>
-                <div className={styles.colorBox}></div>
-                <span>Personal</span>
-              </div>
-            </div>
-          </button>
+                  {/* Tên List và Màu sắc */}
+                  {task.nameList && (
+                    <div className={styles.signature}>
+                      <div
+                        className={styles.colorBox}
+                        style={{ backgroundColor: task.listColor || "#ddd" }}
+                      ></div>
+                      <span>{task.nameList}</span>
+                    </div>
+                  )}
+                </div>
+              </button>
+            ))
+          ) : (
+            <p className={styles.empty}>Hôm nay bạn chưa có công việc nào!</p>
+          )}
         </div>
       </div>
 
       <div className={styles.right}>
         {showForm && (
-          <FormTask task={selectedTask} onClose={() => setShowForm(false)} />
+          <FormTask
+            task={selectedTask}
+            onClose={() => setShowForm(false)}
+            onSaveSuccess={fetchTasks} // Refresh lại danh sách sau khi lưu
+          />
         )}
       </div>
     </div>

@@ -7,10 +7,9 @@ import edu.ut.todocloud.model.Task;
 import edu.ut.todocloud.service.ITaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -20,6 +19,11 @@ public class TaskController {
 
     @Autowired
     private TaskMapper taskMapper;
+
+    @GetMapping("/today")
+    public ResponseEntity<List<TaskResponse>> getTodayTasks() {
+        return ResponseEntity.ok(taskService.getTodayTasks());
+    }
 
     @PostMapping
     public ResponseEntity<?> createNewTask(@RequestBody TaskRequest taskRequest) {

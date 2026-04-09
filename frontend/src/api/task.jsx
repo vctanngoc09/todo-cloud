@@ -7,4 +7,6 @@ export const createTask = (taskData) => {
 };
 
 // Các hàm bổ sung sau này
-export const getTasks = () => axiosInstance.get("/tasks");
+export const getTodayTasks = () => {
+  return axiosInstance.get("/tasks/today");
+};

@@ -37,10 +37,16 @@ public class TaskMapper {
 
         if (task.getTodoList() != null) {
             response.setListId(task.getTodoList().getId());
+            response.setNameList(task.getTodoList().getNameList());
+            response.setListColor(task.getTodoList().getColor());
         }
 
         if (task.getUser() != null) {
             response.setUsername(task.getUser().getUsername());
+        }
+
+        if (task.getSubTasks() != null) {
+            response.setSubtaskCount(task.getSubTasks().size());
         }
 
         return response;
