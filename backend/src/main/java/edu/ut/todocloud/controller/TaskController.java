@@ -6,11 +6,12 @@ import edu.ut.todocloud.mapper.TaskMapper;
 import edu.ut.todocloud.model.Task;
 import edu.ut.todocloud.service.ITaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -31,5 +32,11 @@ public class TaskController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi khi tạo Task: " + e.getMessage());
         }
+    }
+    @GetMapping("/by-date")
+    public ResponseEntity<List<TaskResponse>> getTasksByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        return ResponseEntity.ok(taskService.getTasksByDate(date));
     }
 }
