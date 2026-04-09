@@ -5,13 +5,17 @@ import { getAllLists } from "../../api/list";
 import { getTagsByUserId } from "../../api/tag";
 import { AuthService } from "../../services/auth.service";
 import { useEffect, useState } from "react";
-
+import AddSubtaskForm from "../AddSubtaskForm/AddSubtaskForm";
+import { createTask } from "../../api/task";
 function FormTask({ task, onClose }) {
   const [lists, setLists] = useState([]);
   const [tags, setTags] = useState([]);
 
   const user = AuthService.getUser();
   const userId = user?.id;
+
+  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
+  const [subtasks, setSubtasks] = useState(task?.subTasks || []);
 
   // 🔥 FORM DATA
   const [taskData, setTaskData] = useState({
@@ -21,6 +25,14 @@ function FormTask({ task, onClose }) {
     dueDate: task?.dueDate || "",
     tagIds: task?.tags?.map((t) => t.id) || [],
   });
+
+  const handleAddSubtaskUI = (title) => {
+    // Tạm thời chỉ cập nhật UI để bạn thấy
+    const newSub = { id: Date.now(), title, completed: false };
+    setSubtasks((prev) => [...prev, newSub]);
+    setShowSubtaskForm(false); // Đóng form sau khi add
+    console.log("Subtask mới:", title);
+  };
 
   // =============================
   // FETCH LIST
@@ -83,6 +95,35 @@ function FormTask({ task, onClose }) {
   // AUTO TEXT COLOR
   // =============================
 
+  const handleSave = async () => {
+    // Kiểm tra tên task không được để trống
+    if (!taskData.title.trim()) {
+      alert("Vui lòng nhập tên công việc!");
+      return;
+    }
+
+    // Chuẩn bị payload đúng cấu trúc mà Backend yêu cầu
+    const payload = {
+      ...taskData,
+      // Chuyển mảng object subtasks thành mảng các chuỗi tiêu đề (String)
+      subtasks: subtasks.map((s) => s.title),
+    };
+
+    try {
+      console.log("Đang gửi dữ liệu:", payload);
+
+      const response = await createTask(payload);
+
+      if (response) {
+        alert("Tạo Task thành công!");
+        onClose(); // Đóng form sau khi lưu thành công
+        // Nếu bạn có hàm reload data ở trang chính, hãy gọi nó ở đây
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo Task:", error);
+      alert("Có lỗi xảy ra: " + (error.response?.data || error.message));
+    }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -176,23 +217,47 @@ function FormTask({ task, onClose }) {
         <div className={styles.subtasksSection}>
           <h3 className={styles.subtaskTitle}>Subtasks:</h3>
 
-          <button className={styles.addSubtask}>
-            <FontAwesomeIcon icon={faPlus} className={styles.plusIcon} />
-            <span>Add New Subtask</span>
-          </button>
+          {/* 1. Đưa nút Add và Form lên đầu danh sách */}
+          {showSubtaskForm ? (
+            <AddSubtaskForm
+              onAdd={handleAddSubtaskUI}
+              onClose={() => setShowSubtaskForm(false)}
+            />
+          ) : (
+            <button
+              className={styles.addSubtask}
+              onClick={() => setShowSubtaskForm(true)}
+            >
+              <FontAwesomeIcon icon={faPlus} className={styles.plusIcon} />
+              <span>Add New Subtask</span>
+            </button>
+          )}
 
-          <div className={styles.subtaskItem}>
-            <input type="checkbox" id="sub1" className={styles.checkbox} />
-            <label htmlFor="sub1">Subtask</label>
+          {/* 2. Danh sách subtasks hiện ở dưới nút thêm */}
+          <div className={styles.subtaskList}>
+            {subtasks.map((sub) => (
+              <div key={sub.id} className={styles.subtaskItem}>
+                <input
+                  type="checkbox"
+                  id={`sub-${sub.id}`}
+                  className={styles.checkbox}
+                  defaultChecked={sub.completed}
+                />
+                <label htmlFor={`sub-${sub.id}`}>{sub.title}</label>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* FOOTER */}
         <div className={styles.actions}>
-          <button className={styles.deleteBtn}>Delete Task</button>
+          <button className={styles.deleteBtn} type="button">
+            Delete Task
+          </button>
           <button
+            type="button"
             className={styles.saveBtn}
-            onClick={() => console.log("DATA:", taskData)}
+            onClick={handleSave} // 2. Gọi hàm handleSave thay vì console.log
           >
             Save changes
           </button>

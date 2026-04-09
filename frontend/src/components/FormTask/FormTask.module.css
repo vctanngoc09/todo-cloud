@@ -213,10 +213,49 @@
   background-color: #f1f3f5;
 }
 
+.subtaskList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px; /* Giới hạn chiều cao nếu quá nhiều subtask */
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.subtaskList::-webkit-scrollbar {
+  width: 4px;
+}
+.subtaskList::-webkit-scrollbar-thumb {
+  background: #eee;
+  border-radius: 10px;
+}
+
 .subtaskItem {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding: 5px 6px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.subtaskItem:hover {
+  border-color: #f5c542;
+  background-color: #f4f4f4;
+  transform: translateX(3px); /* Hiệu ứng nhích nhẹ sang phải khi hover */
+}
+
+.checkbox:checked + label {
+  text-decoration: line-through;
+  color: #adb5bd;
+}
+
+.subtaskItem label {
+  flex: 1;
+  cursor: pointer;
+  min-width: 90px;
+  font-weight: 500;
+  color: #666;
   font-size: 14px;
 }
 
