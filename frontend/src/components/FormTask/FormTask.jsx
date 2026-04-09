@@ -105,7 +105,8 @@ function FormTask({ task, onClose }) {
     // Chuẩn bị payload đúng cấu trúc mà Backend yêu cầu
     const payload = {
       ...taskData,
-      // Chuyển mảng object subtasks thành mảng các chuỗi tiêu đề (String)
+      listId: taskData.listId || null,
+      dueDate: taskData.dueDate ? `${taskData.dueDate}T23:59:59` : null,
       subtasks: subtasks.map((s) => s.title),
     };
 
