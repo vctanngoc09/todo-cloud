@@ -10,3 +10,12 @@ export const createTask = (taskData) => {
 export const getTodayTasks = () => {
   return axiosInstance.get("/tasks/today");
 };
+export const getTasksByDate = (date) => {
+  // date format: "yyyy-MM-dd"
+  return axiosInstance.get("/tasks/by-date", {
+    params: { date },
+  });
+};
+export const getTaskDetail = (id) => {
+  return axiosInstance.get(`/tasks/${id}`);
+};

@@ -1,0 +1,186 @@
+/* OVERLAY */
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3); /* nền mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* FORM NỔI GIỮA */
+.form {
+  width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  background: #f9fafb;
+  border-radius: 20px;
+  padding: 20px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.closeIcon {
+  cursor: pointer;
+  color: #999;
+  transition: 0.2s;
+}
+
+.closeIcon:hover {
+  color: #333;
+  transform: scale(1.1);
+}
+
+/* INPUT */
+.inputMain {
+  width: 100%;
+  padding: 12px;
+
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background-color: #fff;
+
+  font-size: 14px;
+  outline: none;
+}
+
+/* TEXTAREA */
+.textarea {
+  width: 100%;
+  height: 110px;
+  padding: 12px;
+
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background-color: #fff;
+
+  resize: none;
+  outline: none;
+}
+
+/* ROW */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.row label {
+  min-width: 90px;
+  font-weight: 500;
+  color: #666;
+  font-size: 14px;
+}
+
+/* SELECT + DATE */
+.select,
+.dateInput {
+  flex: 1;
+  padding: 8px 10px;
+
+  border-radius: 8px;
+  border: 1px solid #eee;
+
+  background-color: #fff;
+  color: #444;
+  outline: none;
+}
+
+/* TAGS */
+.tagGroup {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.tagBadge {
+  padding: 6px 12px;
+  border-radius: 4px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: default;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* SUBTASK */
+.subtasksSection {
+  margin-top: 10px;
+  flex-grow: 1;
+}
+
+.subtaskTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.subtaskList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.subtaskList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.subtaskList::-webkit-scrollbar-thumb {
+  background: #eee;
+  border-radius: 10px;
+}
+
+.subtaskItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 6px;
+  border-radius: 10px;
+}
+
+.doneText {
+  text-decoration: line-through;
+  color: #adb5bd;
+}
+
+.subText {
+  color: #666;
+}
+
+/* FOOTER */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.actions div label {
+  color: #6a6a6a;
+}
+.actions div span {
+  color: #a67a00;
+}

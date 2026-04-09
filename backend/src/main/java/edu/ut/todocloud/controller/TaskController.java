@@ -1,6 +1,7 @@
 package edu.ut.todocloud.controller;
 
 import edu.ut.todocloud.dto.request.TaskRequest;
+import edu.ut.todocloud.dto.response.TaskDetailResponse;
 import edu.ut.todocloud.dto.response.TaskResponse;
 import edu.ut.todocloud.mapper.TaskMapper;
 import edu.ut.todocloud.model.Task;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,5 +37,16 @@ public class TaskController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi khi tạo Task: " + e.getMessage());
         }
+    }
+    @GetMapping("/by-date")
+    public ResponseEntity<List<TaskResponse>> getTasksByDate(
+            @RequestParam String date) {
+
+        LocalDate localDate = LocalDate.parse(date); // format: yyyy-MM-dd
+        return ResponseEntity.ok(taskService.getTasksByDate(localDate));
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskDetailResponse> getTaskDetail(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.getTaskDetail(id));
     }
 }

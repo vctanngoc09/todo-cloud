@@ -1,98 +1,132 @@
+import { useEffect, useState } from "react";
 import styles from "./Day.module.css";
+import { getTasksByDate } from "../../../api/task.jsx";
+import TaskDetail from "../../TaskDetail/TaskDetail.jsx";
 
-import DateTimeUtils from "../../../utils/DateTimeUtils";
-const tasks = [
-  {
-    id: 1,
-    title: "Dien Toan",
-    description: "Tao may chu ..........................................",
-    status: "hoanthanh",
-    due_date: "2026-03-15T10:30:00",
-    list: "Gia đình",
-  },
-  {
-    id: 2,
-    title: "Hoc React",
-    description: "Hoc useState va useEffect",
-    status: "danglam",
-    due_date: "2026-03-16T09:00:00",
-    list: "Công việc",
-  },
-  {
-    id: 3,
-    title: "Di sieu thi",
-    description: "Mua rau, thit, sua55",
-    status: "chuahoanthanh",
-    due_date: "2026-03-18T14:15:00",
-    list: "Gia đình",
-  },
-  {
-    id: 4,
-    title: "Tap gym",
-    description: "Tap chan va bung",
-    status: "danglam",
-    due_date: "2026-03-20T18:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 5,
-    title: "Lam bai tap",
-    description: "Hoan thanh bai tap JS",
-    status: "chuahoanthanh",
-    due_date: "2026-03-25T18:30:00",
-    list: "Học tập",
-  },
-  {
-    id: 6,
-    title: "Hop team",
-    description: "Discuss project",
-    status: "hoanthanh",
-    due_date: "2026-04-02T08:30:00",
-    list: "Công việc",
-  },
-  {
-    id: 7,
-    title: "Doc sach",
-    description: "Doc 20 trang sach",
-    status: "danglam",
-    due_date: "2026-04-10T21:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 8,
-    title: "Don dep nha",
-    description: "Lau nha, rua chen",
-    status: "chuahoanthanh",
-    due_date: "2026-04-15T07:45:00",
-    list: "Gia đình",
-  },
-];
+const generateHours = () => {
+  return Array.from({ length: 24 }, (_, i) => ({
+    id: i,
+    title: `${i.toString().padStart(2, "0")}:00`,
+  }));
+};
 
-function getHour(dateString) {
-  return new Date(dateString).getHours();
-}
+const formatTime = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
 function Day() {
-  const hours = DateTimeUtils.getHours();
+  const hours = generateHours();
+  const today = new Date().toLocaleDateString("en-CA");
+
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [tasks, setTasks] = useState([]);
+  const [currentHour, setCurrentHour] = useState(new Date().getHours());
+  const [selectedTaskId, setSelectedTaskId] = useState(null); // ⭐ Chỉ lưu ID
+
+  // Cập nhật giờ hiện tại mỗi phút
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentHour(new Date().getHours());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch tasks theo ngày
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await getTasksByDate(selectedDate);
+        const data = res?.data || res;
+        setTasks(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Lỗi lấy tasks:", err);
+        setTasks([]);
+      }
+    };
+    fetchTasks();
+  }, [selectedDate]);
+
   return (
     <div className={styles.wrapper}>
-      <div className={styles.header}>Thứ 3</div>
+      {/* HEADER */}
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          {new Date(selectedDate).toLocaleDateString("vi-VN", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })}
+        </div>
+        <div className={styles.headerRight}>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className={styles.datePicker}
+          />
+        </div>
+      </div>
+
+      {/* CONTENT */}
       <div className={styles.content}>
-        {hours.map((hour, index) => (
-          <div key={hour.id} className={styles.calendarDay}>
-            <div className={styles.time}>{hour.title}</div>
-            <div className={styles.tasks}>
-              {tasks
-                .filter((task) => getHour(task.due_date) === hour.id)
-                .map((task) => (
-                  <div key={task.id} className={styles.description}>
-                    {task.description}
+        {hours.map((hour) => {
+          const tasksInHour = tasks
+            .filter((task) => new Date(task.dueDate).getHours() === hour.id)
+            .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+          const isCurrentHour =
+            selectedDate === today && currentHour === hour.id;
+
+          return (
+            <div
+              key={hour.id}
+              className={`${styles.calendarDay} ${isCurrentHour ? styles.currentHourRow : ""}`}
+            >
+              <div className={styles.time}>
+                {isCurrentHour && <div className={styles.currentDot}></div>}
+                {hour.title}
+              </div>
+
+              <div className={styles.tasks}>
+                {tasksInHour.map((task) => (
+                  <div
+                    key={task.id}
+                    className={styles.taskCard}
+                    onClick={() => setSelectedTaskId(task.id)} // ⭐ Mở Modal bằng ID
+                    style={{
+                      backgroundColor: task.completed
+                        ? "#e5e5e5"
+                        : task.listColor || "#cfe8ec",
+                      opacity: task.completed ? 0.7 : 1,
+                    }}
+                  >
+                    <div className={styles.taskHeader}>
+                      <span className={styles.taskTitle}>{task.title}</span>
+                      <span className={styles.taskTime}>
+                        {formatTime(task.dueDate)}
+                      </span>
+                    </div>
                   </div>
                 ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* ⭐ MODAL DETAIL */}
+      {selectedTaskId && (
+        <TaskDetail
+          taskId={selectedTaskId}
+          onClose={() => setSelectedTaskId(null)}
+        />
+      )}
     </div>
   );
 }
+
 export default Day;

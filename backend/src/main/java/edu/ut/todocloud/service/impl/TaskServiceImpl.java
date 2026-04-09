@@ -1,6 +1,7 @@
 package edu.ut.todocloud.service.impl;
 
 import edu.ut.todocloud.dto.request.TaskRequest;
+import edu.ut.todocloud.dto.response.TaskDetailResponse;
 import edu.ut.todocloud.dto.response.TaskResponse;
 import edu.ut.todocloud.mapper.TaskMapper;
 import edu.ut.todocloud.model.*;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -85,5 +87,41 @@ public class TaskServiceImpl implements ITaskService {
                 .stream()
                 .map(taskMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+    @Override
+    public List<TaskResponse> getTasksByDate(LocalDate date) {
+        // 1. Lấy user hiện tại
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 2. Convert date -> start & end of day
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
+        // 3. Query + map
+        return taskRepository.findByUserAndDueDateBetween(user, startOfDay, endOfDay)
+                .stream()
+                .map(taskMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public TaskDetailResponse getTaskDetail(Long taskId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+
+        if (!task.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Bạn không có quyền truy cập task này");
+        }
+
+        // 4. Map sang TaskDetailResponse
+        return taskMapper.toDetailResponse(task);
     }
 }
