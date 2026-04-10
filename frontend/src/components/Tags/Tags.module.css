@@ -1,0 +1,126 @@
+.wrapper {
+    padding: 2rem;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.titleGroup h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.badge {
+    background: #fdfbf5;
+    padding: 4px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #ffc800;
+    border: 1px solid #ffd43b;
+}
+
+.addBtn {
+    background-color: #ffd43b;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.addBtn:hover {
+    background-color: #fcc419;
+}
+
+.tagGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.tagCard {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.tagInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.colorIndicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+}
+
+.tagName {
+    font-weight: 600;
+    color: #444;
+}
+
+.statusBadge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius:8px;
+    font-weight: 500;
+}
+
+.active {
+    background-color: #ebfbee;
+    color: #2b8a3e;
+}
+
+.inactive {
+    background-color: #f1f3f5;
+    color: #868e96;
+}
+
+.dot {
+    font-size: 6px;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 4rem;
+    color: #adb5bd;
+}
+
+.emptyIcon {
+    font-size: 48px;
+    margin-bottom: 1rem;
+}
+
+.message {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}

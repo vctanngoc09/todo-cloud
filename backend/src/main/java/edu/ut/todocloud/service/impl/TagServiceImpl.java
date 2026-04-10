@@ -45,9 +45,14 @@ public class TagServiceImpl implements ITagService {
     public TagResponse updateTag(Long id, TagRequest request) {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
+
         tag.setNameTag(request.getNameTag());
         tag.setColor(request.getColor());
-        return TagMapper.toResponse(tagRepository.save(tag));
+        tag.setActive(request.isActive());
+
+        Tag updated = tagRepository.save(tag);
+
+        return TagMapper.toResponse(updated);
     }
 
     @Override
@@ -72,5 +77,12 @@ public class TagServiceImpl implements ITagService {
 
         // 3. Lưu hàng loạt vào bảng trung gian
         taskTagRepository.saveAll(taskTags);
+    }
+    @Override
+    public List<TagResponse> getActiveTagsByUserId(Long userId) {
+
+        return tagRepository.findByUserIdAndActiveTrue(userId).stream()
+                .map(TagMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

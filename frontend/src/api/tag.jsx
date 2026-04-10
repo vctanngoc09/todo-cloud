@@ -4,7 +4,9 @@ import axiosInstance from "./axiosInstance";
 export const getTagsByUserId = (userId) => {
   return axiosInstance.get(`/tags/user/${userId}`);
 };
-
+export const getActiveTagsByUserId = (userId) => {
+  return axiosInstance.get(`/tags/active/${userId}`);
+};
 // Tạo tag mới
 export const createTag = (data) => {
   // data: { nameTag, color, userId }

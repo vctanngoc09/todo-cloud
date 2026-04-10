@@ -97,6 +97,7 @@ public class TaskMapper {
                             t.setId(tag.getId());
                             t.setNameTag(tag.getNameTag());
                             t.setColor(tag.getColor());
+                            t.setActive(tag.isActive());
                             return t;
                         }).toList()
                         : List.of()

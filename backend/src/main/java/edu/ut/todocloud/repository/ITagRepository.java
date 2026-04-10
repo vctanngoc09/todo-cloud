@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ITagRepository extends JpaRepository<Tag, Long> {
     List<Tag> findByUserId(Long userId);
+    List<Tag> findByUserIdAndActiveTrue(Long userId);
 }

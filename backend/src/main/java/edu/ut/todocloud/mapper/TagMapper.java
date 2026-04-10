@@ -10,18 +10,25 @@ import edu.ut.todocloud.model.User;
 public class TagMapper {
 
     public static TagResponse toResponse(Tag tag) {
+        if (tag == null) return null;
+
         return TagResponse.builder()
                 .id(tag.getId())
                 .nameTag(tag.getNameTag())
                 .color(tag.getColor())
+                .active(tag.isActive())
                 .build();
     }
 
     public static Tag toEntity(TagRequest request, User user) {
+        if (request == null) return null;
+
         Tag tag = new Tag();
         tag.setNameTag(request.getNameTag());
         tag.setColor(request.getColor());
         tag.setUser(user);
+        tag.setActive(request.isActive());
+
         return tag;
     }
 

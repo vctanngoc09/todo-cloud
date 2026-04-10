@@ -12,4 +12,5 @@ public interface ITagService {
     TagResponse updateTag(Long id, TagRequest request);
     void deleteTag(Long id);
     void assignTagsToTask(List<Long> tagIds, Task task);
+    List<TagResponse> getActiveTagsByUserId(Long userId);
 }

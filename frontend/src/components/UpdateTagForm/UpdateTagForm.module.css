@@ -17,18 +17,6 @@
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: fadeUp 0.2s ease;
-}
-
-@keyframes fadeUp {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
 }
 
 .modal h2 {
@@ -64,20 +52,6 @@
   border-color: #ffd43b;
 }
 
-/* PREVIEW */
-.preview {
-  margin-bottom: 14px;
-}
-
-.previewTag {
-  display: inline-block;
-  padding: 5px 12px;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-}
-
 /* COLOR LIST */
 .colorList {
   display: flex;
@@ -104,6 +78,50 @@
   box-shadow: 0 0 0 2px #ffd43b;
 }
 
+/* CHECKBOX */
+.fieldRow {
+  margin-bottom: 16px;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.checkboxWrapper input {
+  display: none;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+  position: relative;
+  transition: 0.2s;
+}
+
+.checkboxWrapper input:checked + .checkmark {
+  background: #ffd43b;
+  border-color: #ffd43b;
+}
+
+.checkboxWrapper input:checked + .checkmark::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid #333;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
 /* ACTIONS */
 .actions {
   display: flex;
@@ -118,10 +136,8 @@
   border: none;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
 }
 
-/* cancel */
 .actions button[type="button"] {
   background: #f1f3f5;
   color: #333;
@@ -131,12 +147,11 @@
   background: #e9ecef;
 }
 
-/* submit */
-.actions button[type="button"]:last-child {
+.actions button[type="submit"] {
   background: #ffd43b;
   color: #333;
 }
 
-.actions button[type="button"]:last-child:hover {
+.actions button[type="submit"]:hover {
   background: #fcc419;
 }

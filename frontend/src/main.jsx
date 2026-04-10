@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import Global from "./styles/Global/Global.jsx";
+import { TagsProvider } from "./contexts/TagsContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Global>
-        <App />
+        <TagsProvider>
+          <App />
+        </TagsProvider>
       </Global>
     </BrowserRouter>
   </StrictMode>,

@@ -20,7 +20,8 @@ public class Tag {
     private String nameTag;
 
     private String color;
-
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active = true;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

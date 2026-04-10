@@ -10,4 +10,5 @@ public class TagResponse {
     private Long id;
     private String nameTag;
     private String color;
+    private boolean active;
 }

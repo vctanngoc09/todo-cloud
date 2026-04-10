@@ -1,27 +1,30 @@
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faMagnifyingGlass,
   faPlus,
-  faGear,
   faSignOutAlt,
   faChevronDown,
   faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
+
 import styles from "./DashboardLayout.module.css";
-import { useEffect, useState } from "react";
 
 import { IDTASKS, TASKS } from "../../constants/task";
+
 import Upcoming from "../../components/Upcoming/Upcoming";
 import Today from "../../components/Today/Today";
 import Calendar from "../../components/Calendar/Calendar";
 import StickyWall from "../../components/StickyWall/StickyWall";
 import AddListForm from "../../components/AddListForm/AddListForm";
 import AddTagForm from "../../components/AddTagForm/AddTagForm";
+import Tags from "../../components/Tags/Tags";
 
 import { AuthService } from "../../services/auth.service";
-import { getTagsByUserId, createTag } from "../../api/tag";
 import { getAllLists, createList } from "../../api/list";
+
+import { useTags } from "../../contexts/TagsContext.jsx";
 
 function DashboardLayout() {
   const [active, setActive] = useState(IDTASKS.Today);
@@ -30,11 +33,11 @@ function DashboardLayout() {
   const [showListForm, setShowListForm] = useState(false);
   const [showTagForm, setShowTagForm] = useState(false);
 
-  const [tags, setTags] = useState([]);
   const [lists, setLists] = useState([]);
-
   const [showAllLists, setShowAllLists] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
+
+  const { tags, addTag } = useTags();
 
   const user = AuthService.getUser();
   const userId = user?.id;
@@ -44,43 +47,47 @@ function DashboardLayout() {
     [IDTASKS.Today]: <Today />,
     [IDTASKS.Calendar]: <Calendar />,
     [IDTASKS.StickyWall]: <StickyWall />,
+    [IDTASKS.Tags]: <Tags />,
   };
 
   const LISTS_LIMIT = 3;
   const TAGS_LIMIT = 5;
 
+  // =========================
+  // CHỈ LẤY TAG ACTIVE
+  // =========================
+  const activeTags = tags.filter((tag) => tag.active);
+
   const visibleLists = showAllLists ? lists : lists.slice(0, LISTS_LIMIT);
-  const visibleTags = showAllTags ? tags : tags.slice(0, TAGS_LIMIT);
-  const hiddenTagsCount = tags.length - TAGS_LIMIT;
 
-  useEffect(() => {
-    if (!userId) return;
+  const visibleTags = showAllTags
+    ? activeTags
+    : activeTags.slice(0, TAGS_LIMIT);
 
-    const fetchTags = async () => {
-      try {
-        const res = await getTagsByUserId(userId);
-        setTags(res);
-      } catch (error) {
-        console.error("Lỗi lấy nhãn:", error);
-      }
-    };
+  const hiddenTagsCount = Math.max(0, activeTags.length - TAGS_LIMIT);
 
-    fetchTags();
-  }, [userId]);
-
+  // ADD TAG
   const handleAddTag = async (data) => {
     try {
-      const newTag = await createTag({
-        ...data,
-        userId: userId,
-      });
-      setTags((prev) => [...prev, newTag]);
+      await addTag(data);
+      setShowTagForm(false);
     } catch (error) {
-      console.error("Lỗi tạo nhãn:", error);
-      throw error;
+      alert("Lỗi khi tạo nhãn!");
     }
   };
 
+  // ADD LIST
+  const handleAddList = async (data) => {
+    try {
+      const newList = await createList(data);
+      setLists((prev) => [...prev, newList]);
+      setShowListForm(false);
+    } catch (error) {
+      alert("Lỗi khi tạo danh sách!");
+    }
+  };
+
+  // LOAD LISTS
   useEffect(() => {
     const fetchLists = async () => {
       try {
@@ -90,19 +97,9 @@ function DashboardLayout() {
         console.error("Lỗi lấy danh sách:", error);
       }
     };
+
     fetchLists();
   }, []);
-
-  const handleAddList = async (data) => {
-    try {
-      const newList = await createList(data);
-      setLists((prev) => [...prev, newList]);
-      setShowListForm(false);
-    } catch (error) {
-      alert("Lỗi khi tạo danh sách!");
-      console.error(error);
-    }
-  };
 
   return (
     <div className={styles.wrapper}>
@@ -118,10 +115,7 @@ function DashboardLayout() {
 
         {/* SEARCH */}
         <div className={styles.search}>
-          <FontAwesomeIcon
-            icon={faMagnifyingGlass}
-            className={styles.searchIcon}
-          />
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
           <input type="text" placeholder="Tìm kiếm" />
         </div>
 
@@ -138,8 +132,7 @@ function DashboardLayout() {
                 onClick={() => setActive(obj.id)}
               >
                 <div className={styles.left}>
-                  <span className={styles.iconWrapper}>{obj.icon}</span>
-                  {obj.title}
+                  {obj.icon} {obj.title}
                 </div>
                 <div className={styles.count}>5</div>
               </li>
@@ -157,7 +150,7 @@ function DashboardLayout() {
                   <span
                     className={styles.colorBox}
                     style={{ backgroundColor: list.color }}
-                  ></span>
+                  />
                   {list.nameList}
                 </div>
                 <div className={styles.count}>{list.tasks?.length || 0}</div>
@@ -193,10 +186,11 @@ function DashboardLayout() {
         {/* TAGS */}
         <div className={styles.section}>
           <p className={styles.sectionTitle}>Nhãn</p>
+
           <div className={styles.tagContainer}>
             {visibleTags.map((tag) => (
               <span
-                key={tag.id}
+                key={tag.id || tag._id}
                 className={styles.tagItem}
                 style={{ backgroundColor: tag.color }}
               >
@@ -213,7 +207,7 @@ function DashboardLayout() {
               </span>
             )}
 
-            {showAllTags && tags.length > TAGS_LIMIT && (
+            {showAllTags && activeTags.length > TAGS_LIMIT && (
               <span
                 className={styles.showLessTagsBtn}
                 onClick={() => setShowAllTags(false)}

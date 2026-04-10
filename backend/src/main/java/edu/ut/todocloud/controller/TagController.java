@@ -22,9 +22,15 @@ public class TagController {
     public ResponseEntity<List<TagResponse>> getTagsByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(tagService.getAllTagsByUserId(userId));
     }
-
+    @GetMapping("/active/{userId}")
+    public ResponseEntity<List<TagResponse>> getActiveTags(@PathVariable Long userId) {
+        List<TagResponse> activeTags = tagService.getActiveTagsByUserId(userId);
+        return ResponseEntity.ok(activeTags);
+    }
     @PostMapping
     public ResponseEntity<TagResponse> createTag(@RequestBody TagRequest request) {
+        System.out.println("111111111111111111111111111111111111111111111111");
+        System.out.println(request.isActive());
         return new ResponseEntity<>(tagService.createTag(request), HttpStatus.CREATED);
     }
 
@@ -38,4 +44,5 @@ public class TagController {
         tagService.deleteTag(id);
         return ResponseEntity.noContent().build();
     }
+
 }
