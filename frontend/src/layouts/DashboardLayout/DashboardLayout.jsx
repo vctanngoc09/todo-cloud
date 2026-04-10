@@ -114,10 +114,7 @@ function DashboardLayout() {
         </div>
 
         {/* SEARCH */}
-        <div className={styles.search}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
-          <input type="text" placeholder="Tìm kiếm" />
-        </div>
+        
 
         {/* TASKS */}
         <div className={styles.section}>
@@ -153,7 +150,7 @@ function DashboardLayout() {
                   />
                   {list.nameList}
                 </div>
-                <div className={styles.count}>{list.tasks?.length || 0}</div>
+              
               </li>
             ))}
 
