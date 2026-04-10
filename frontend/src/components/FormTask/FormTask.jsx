@@ -1,6 +1,7 @@
 import styles from "./FormTask.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCalendarDays } from "@fortawesome/free-regular-svg-icons";
 import { getAllLists } from "../../api/list";
 import { getTagsByUserId } from "../../api/tag";
 import { AuthService } from "../../services/auth.service";
@@ -22,7 +23,10 @@ function FormTask({ task, onClose }) {
     title: task?.title || "",
     description: task?.description || "",
     listId: task?.todoList?.id || "",
-    dueDate: task?.dueDate || "",
+    dueDate: task?.dueDate ? task.dueDate.split("T")[0] : "", // Lấy phần YYYY-MM-DD
+    dueTime: task?.dueDate
+      ? task.dueDate.split("T")[1].substring(0, 5)
+      : "00:00", // Lấy HH:mm
     tagIds: task?.tags?.map((t) => t.id) || [],
   });
 
@@ -96,29 +100,30 @@ function FormTask({ task, onClose }) {
   // =============================
 
   const handleSave = async () => {
-    // Kiểm tra tên task không được để trống
     if (!taskData.title.trim()) {
       alert("Vui lòng nhập tên công việc!");
       return;
     }
 
-    // Chuẩn bị payload đúng cấu trúc mà Backend yêu cầu
+    const combinedDateTime = taskData.dueDate
+      ? `${taskData.dueDate}T${taskData.dueTime || "00:00"}:00`
+      : null;
+
     const payload = {
-      ...taskData,
+      title: taskData.title,
+      description: taskData.description,
       listId: taskData.listId || null,
-      dueDate: taskData.dueDate ? `${taskData.dueDate}T23:59:59` : null,
+      dueDate: combinedDateTime,
+      tagIds: taskData.tagIds,
       subtasks: subtasks.map((s) => s.title),
     };
 
     try {
       console.log("Đang gửi dữ liệu:", payload);
-
       const response = await createTask(payload);
-
       if (response) {
         alert("Tạo Task thành công!");
-        onClose(); // Đóng form sau khi lưu thành công
-        // Nếu bạn có hàm reload data ở trang chính, hãy gọi nó ở đây
+        onClose();
       }
     } catch (error) {
       console.error("Lỗi khi tạo Task:", error);
@@ -178,13 +183,34 @@ function FormTask({ task, onClose }) {
         {/* DATE */}
         <div className={styles.row}>
           <label>Due date</label>
-          <input
-            name="dueDate"
-            type="date"
-            className={styles.dateInput}
-            value={taskData.dueDate}
-            onChange={handleChange}
-          />
+          <div className={styles.inputWrapper}>
+            <input
+              name="dueDate"
+              type="date"
+              className={styles.dateInput}
+              value={taskData.dueDate}
+              onChange={handleChange}
+            />
+            <FontAwesomeIcon
+              icon={faCalendarDays}
+              className={styles.inputIcon}
+            />
+          </div>
+        </div>
+
+        {/* TIME */}
+        <div className={styles.row}>
+          <label>Time</label>
+          <div className={styles.inputWrapper}>
+            <input
+              name="dueTime"
+              type="time"
+              className={styles.dateInput}
+              value={taskData.dueTime}
+              onChange={handleChange}
+            />
+            <FontAwesomeIcon icon={faClock} className={styles.inputIcon} />
+          </div>
         </div>
 
         {/* ========================= */}
