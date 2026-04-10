@@ -57,4 +57,11 @@ public class TaskController {
 
         return ResponseEntity.ok(taskService.getTasksByWeek(localDate));
     }
+    @GetMapping("/month")
+    public ResponseEntity<List<TaskResponse>> getTasksByMonth(
+            @RequestParam String date) {
+
+        LocalDate localDate = LocalDate.parse(date);
+        return ResponseEntity.ok(taskService.getTasksByMonth(localDate));
+    }
 }

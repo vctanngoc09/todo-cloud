@@ -1,90 +1,171 @@
 .wrapper {
-  background-color: #ffffff;
+  background: rgb(248, 248, 248);
   min-height: 100vh;
+  padding: 16px;
+  border-radius: 10px;
 }
 
+/* ================= NAV ================= */
+.monthNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* LEFT */
+.monthLeft {
+  display: flex;
+  gap: 10px;
+}
+
+/* RIGHT */
+.monthRight {
+  display: flex;
+  align-items: center;
+}
+
+/* LABEL */
+.monthLabel {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f5c542;
+}
+
+/* BUTTON */
+.navBtn {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #f5c542;
+  color: white;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.navBtn:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.todayBtn {
+  border: none;
+  background: #f5c542;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid #f5c542;
+  transition: all 0.2s ease;
+}
+
+.todayBtn:hover {
+  background: #f5c542;
+  color: white;
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ================= CALENDAR ================= */
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background-color: rgb(248, 248, 248);
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  gap: 5px;
 }
 
+/* HEADER */
 .dayHeader {
-  background-color: #ffffff;
-  padding: 10px;
   text-align: center;
-  font-weight: bold;
-  box-shadow: 1px 3px 3px -1px rgb(205, 205, 205);
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
 }
 
+/* CELL */
 .dayCell {
-  background-color: #ffffff;
-  min-height: 120px;
+  background: white;
+  min-height: 130px;
   padding: 8px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  box-shadow: 1px 3px 3px -1px rgb(205, 205, 205);
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+.dayCell:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* EMPTY CELL */
+.dayCellEmpty {
+  background: transparent;
+}
+
+/* TODAY */
+.today {
+  border: 2px solid #f5c542;
+  background: #fffbea;
+}
+
+/* DAY NUMBER */
 .dayNumber {
-  font-weight: 500;
-  margin-bottom: 5px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #333;
 }
 
+/* TASK LIST */
 .taskList {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow: hidden;
 }
 
+/* TASK ITEM */
 .taskItem {
-  font-size: 0.75rem;
-  padding: 5px 6px;
-  border-radius: 4px;
-  background-color: #e0f2fe;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: white;
   cursor: pointer;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  min-width: 0;
-}
-.taskTitle {
+  gap: 6px;
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
+}
+
+.taskItem:hover {
+  transform: scale(1.03);
+  opacity: 0.95;
+  border-radius: 6px;
+}
+
+/* DOT nhỏ trước task */
+
+/* TITLE */
+.taskTitle {
   flex: 1;
-  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Màu sắc theo trạng thái */
-.hoanthanh {
-  background-color: #d2f7fc;
-  color: #000000;
-}
-.danglam {
-  background-color: #ffc8d4;
-  color: #000000;
-}
-.chuahoanthanh {
-  background-color: #c9ffe9;
-  color: #000000;
+/* MORE */
+.more {
+  font-size: 12px;
+  color: #6366f1;
+  cursor: pointer;
+  font-weight: 500;
 }
 
-.taskDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: currentColor;
-  margin-right: 4px;
-}
-.today {
-  border: 2px solid rgb(4, 187, 172);
+.more:hover {
+  text-decoration: underline;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./Day.module.css";
 import { getTasksByDate } from "../../../api/task.jsx";
 import TaskDetail from "../../TaskDetail/TaskDetail.jsx";
@@ -25,9 +25,11 @@ function Day() {
   const [selectedDate, setSelectedDate] = useState(today);
   const [tasks, setTasks] = useState([]);
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
-  const [selectedTaskId, setSelectedTaskId] = useState(null); // ⭐ Chỉ lưu ID
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
 
-  // Cập nhật giờ hiện tại mỗi phút
+  const hourRefs = useRef({});
+
+  // cập nhật giờ realtime
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentHour(new Date().getHours());
@@ -35,7 +37,7 @@ function Day() {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch tasks theo ngày
+  // fetch tasks
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -50,24 +52,48 @@ function Day() {
     fetchTasks();
   }, [selectedDate]);
 
+  // scroll tới giờ hiện tại
+  const scrollToCurrentHour = () => {
+    const current = new Date().getHours();
+    const el = hourRefs.current[current];
+
+    if (el) {
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  };
+
+  // auto scroll khi load
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToCurrentHour();
+    }, 300);
+  }, []);
+
   return (
     <div className={styles.wrapper}>
       {/* HEADER */}
       <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          {new Date(selectedDate).toLocaleDateString("vi-VN", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-          })}
-        </div>
         <div className={styles.headerRight}>
+          <button onClick={scrollToCurrentHour} className={styles.nowBtn}>
+            Bây giờ
+          </button>
+
           <input
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
             className={styles.datePicker}
           />
+        </div>
+        <div className={styles.headerLeft}>
+          {new Date(selectedDate).toLocaleDateString("vi-VN", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })}
         </div>
       </div>
 
@@ -84,7 +110,10 @@ function Day() {
           return (
             <div
               key={hour.id}
-              className={`${styles.calendarDay} ${isCurrentHour ? styles.currentHourRow : ""}`}
+              ref={(el) => (hourRefs.current[hour.id] = el)}
+              className={`${styles.calendarDay} ${
+                isCurrentHour ? styles.currentHourRow : ""
+              }`}
             >
               <div className={styles.time}>
                 {isCurrentHour && <div className={styles.currentDot}></div>}
@@ -96,11 +125,11 @@ function Day() {
                   <div
                     key={task.id}
                     className={styles.taskCard}
-                    onClick={() => setSelectedTaskId(task.id)} // ⭐ Mở Modal bằng ID
+                    onClick={() => setSelectedTaskId(task.id)}
                     style={{
                       backgroundColor: task.completed
                         ? "#e5e5e5"
-                        : task.listColor || "#cfe8ec",
+                        : task.listColor || "#888",
                       opacity: task.completed ? 0.7 : 1,
                     }}
                   >
@@ -118,7 +147,7 @@ function Day() {
         })}
       </div>
 
-      {/* ⭐ MODAL DETAIL */}
+      {/* MODAL */}
       {selectedTaskId && (
         <TaskDetail
           taskId={selectedTaskId}

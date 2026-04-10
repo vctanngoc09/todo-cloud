@@ -149,4 +149,29 @@ public class TaskServiceImpl implements ITaskService {
                 .map(taskMapper::toResponse)
                 .toList();
     }
+    @Override
+    public List<TaskResponse> getTasksByMonth(LocalDate date) {
+
+        // 1. Lấy user hiện tại
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 2. Ngày đầu tháng
+        LocalDate firstDay = date.withDayOfMonth(1);
+
+        // 3. Ngày cuối tháng
+        LocalDate lastDay = date.withDayOfMonth(date.lengthOfMonth());
+
+        // 4. Convert sang LocalDateTime
+        LocalDateTime startOfMonth = firstDay.atStartOfDay();
+        LocalDateTime endOfMonth = lastDay.atTime(LocalTime.MAX);
+
+        // 5. Query DB
+        return taskRepository
+                .findByUserAndDueDateBetween(user, startOfMonth, endOfMonth)
+                .stream()
+                .map(taskMapper::toResponse)
+                .toList();
+    }
 }

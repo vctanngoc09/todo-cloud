@@ -46,8 +46,8 @@ function DashboardLayout() {
     [IDTASKS.StickyWall]: <StickyWall />,
   };
 
-  const LISTS_LIMIT = 4;
-  const TAGS_LIMIT = 8;
+  const LISTS_LIMIT = 3;
+  const TAGS_LIMIT = 5;
 
   const visibleLists = showAllLists ? lists : lists.slice(0, LISTS_LIMIT);
   const visibleTags = showAllTags ? tags : tags.slice(0, TAGS_LIMIT);

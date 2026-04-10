@@ -1,52 +1,65 @@
 .wrapper {
-  padding: 10px;
-  background-color: rgb(248, 248, 248);
-  height: 100%;
+  background: rgb(248, 248, 248);
+  min-height: 100vh;
+  padding: 16px;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
 }
 
-/* NAV (đã làm đẹp + đẩy sang phải) */
+/* ================= NAV ================= */
 .weekNav {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  background: rgb(248, 248, 248);
+
+  border-radius: 14px;
+  margin-bottom: 10px;
 }
 
-.weekControls {
+.weekLeft {
   display: flex;
-  gap: 6px;
+  gap: 10px;
 }
 
-.weekLabel {
-  font-weight: 600;
-  font-size: 14px;
-  background: #f5c542;
-  padding: 6px 12px;
-  border-radius: 8px;
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
+/* BUTTON */
 .navBtn {
-  background: white;
   border: none;
-  padding: 6px 10px;
-  border-radius: 50%;
+  padding: 5px 12px;
+  border-radius: 10px;
   cursor: pointer;
+  background: #f5c542;
+  color: white;
   font-size: 14px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .navBtn:hover {
-  background: #f5c542;
-  color: white;
-  transform: scale(1.1);
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* HEADER */
+.todayBtn {
+  border: 1px solid #f5c542;
+  background: #f5c542;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.todayBtn:hover {
+  background: #f5c542;
+  color: white;
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ================= HEADER ================= */
 .header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -55,66 +68,87 @@
 
 .dayHeader {
   text-align: center;
-  padding: 10px 0;
-  border-bottom: 2px solid #ebebeb;
-}
-
-.dayName {
   font-weight: 600;
-}
-
-.dayDate {
-  font-size: 13px;
   color: #666;
+  font-size: 14px;
+  padding-bottom: 6px;
 }
 
-/* BODY */
+/* ================= BODY ================= */
 .body {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 5px;
+
+  flex: 1; /* 🔥 giúp full chiều cao */
 }
 
+/* COLUMN */
 .column {
-  min-height: 500px;
-  background: rgb(255, 255, 255);
-  border-radius: 8px;
-  padding: 8px;
-  transition: 0.2s;
+  background: white;
+  padding: 10px;
+  border-radius: 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  height: 100%; /* 🔥 kéo full */
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+
+  overflow-y: auto; /* 🔥 scroll nếu nhiều task */
 }
 
 .column:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
 }
 
-/* TASK */
+/* TODAY */
+.todayColumn {
+  border: 2px solid #f5c542;
+  background: #fffbea;
+}
+
+/* ================= TASK ================= */
 .task {
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 8px;
-  border-radius: 8px;
-  color: white;
-  margin-bottom: 8px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: 0.2s;
+  gap: 3px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .task:hover {
   transform: scale(1.03);
+  opacity: 0.95;
 }
 
+/* TITLE */
 .title {
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* TIME */
 .time {
   font-size: 11px;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
+/* LIST */
 .list {
   font-size: 10px;
-  opacity: 0.8;
+  opacity: 0.7;
 }

@@ -23,3 +23,8 @@ export const getWeekTasks = (date) => {
     params: { date },
   });
 };
+export const getMonthTasks = (date) => {
+  return axiosInstance.get("/tasks/month", {
+    params: { date },
+  });
+};
