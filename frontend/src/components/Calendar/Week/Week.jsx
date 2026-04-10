@@ -1,309 +1,166 @@
-import DateTimeUtils from "../../../utils/DateTimeUtils";
+import { useEffect, useState } from "react";
 import styles from "./Week.module.css";
+import { getWeekTasks } from "../../../api/task.jsx";
+import TaskDetail from "../../TaskDetail/TaskDetail.jsx";
 
-const tasks = [
-  {
-    id: 1,
-    title: "Dien Toan",
-    description: "Tao may chu ..........................................",
-    status: "hoanthanh",
-    due_date: "2026-03-23T09:00:00",
-    list: "Gia đình",
-  },
-  {
-    id: 2,
-    title: "Hoc React",
-    description: "Hoc useState va useEffect",
-    status: "danglam",
-    due_date: "2026-03-23T09:00:00",
-    list: "Công việc",
-  },
-  {
-    id: 3,
-    title: "Di sieu thi",
-    description: "Mua rau, thit, sua55",
-    status: "chuahoanthanh",
-    due_date: "2026-03-24T14:15:00",
-    list: "Gia đình",
-  },
-  {
-    id: 4,
-    title: "Tap gym",
-    description: "Tap chan va bung",
-    status: "danglam",
-    due_date: "2026-03-23T09:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 5,
-    title: "Lam bai tap",
-    description: "Hoan thanh bai tap JS",
-    status: "chuahoanthanh",
-    due_date: "2026-03-26T18:30:00",
-    list: "Học tập",
-  },
-  {
-    id: 6,
-    title: "Hop team",
-    description: "Discuss project",
-    status: "hoanthanh",
-    due_date: "2026-03-23T09:00:00",
-    list: "Công việc",
-  },
-  {
-    id: 7,
-    title: "Doc sach",
-    description: "Doc 20 trang sach",
-    status: "danglam",
-    due_date: "2026-03-27T21:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 8,
-    title: "Don dep nha",
-    description: "Lau nha, rua chen",
-    status: "chuahoanthanh",
-    due_date: "2026-03-23T07:45:00",
-    list: "Gia đình",
-  },
-  {
-    id: 9,
-    title: "An sang",
-    description: "Banh mi va sua",
-    status: "hoanthanh",
-    due_date: "2026-03-22T07:30:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 10,
-    title: "Code feature A",
-    description: "Lam UI calendar",
-    status: "danglam",
-    due_date: "2026-03-22T10:00:00",
-    list: "Công việc",
-  },
-  {
-    id: 11,
-    title: "Goi dien cho me",
-    description: "Hoi tham suc khoe",
-    status: "chuahoanthanh",
-    due_date: "2026-03-22T20:00:00",
-    list: "Gia đình",
-  },
-  {
-    id: 12,
-    title: "Hoc CSS",
-    description: "Flexbox va Grid",
-    status: "danglam",
-    due_date: "2026-03-23T11:00:00",
-    list: "Học tập",
-  },
-  {
-    id: 13,
-    title: "Uong nuoc",
-    description: "2 lit nuoc",
-    status: "hoanthanh",
-    due_date: "2026-03-23T15:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 14,
-    title: "Nau an",
-    description: "Com toi",
-    status: "chuahoanthanh",
-    due_date: "2026-03-24T18:00:00",
-    list: "Gia đình",
-  },
-  {
-    id: 15,
-    title: "Fix bug",
-    description: "Sua loi login",
-    status: "danglam",
-    due_date: "2026-03-24T09:30:00",
-    list: "Công việc",
-  },
-  {
-    id: 16,
-    title: "Chay bo",
-    description: "Chay 3km",
-    status: "hoanthanh",
-    due_date: "2026-03-25T06:30:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 17,
-    title: "Hoc NodeJS",
-    description: "API co ban",
-    status: "chuahoanthanh",
-    due_date: "2026-03-25T14:00:00",
-    list: "Học tập",
-  },
-  {
-    id: 18,
-    title: "Hop khach hang",
-    description: "Trinh bay demo",
-    status: "danglam",
-    due_date: "2026-03-25T16:00:00",
-    list: "Công việc",
-  },
-  {
-    id: 19,
-    title: "Don phong",
-    description: "Sap xep ban hoc",
-    status: "hoanthanh",
-    due_date: "2026-03-26T08:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 20,
-    title: "Lam viec nhom",
-    description: "Project React",
-    status: "danglam",
-    due_date: "2026-03-26T13:30:00",
-    list: "Học tập",
-  },
-  {
-    id: 21,
-    title: "Di choi",
-    description: "Cafe voi ban",
-    status: "chuahoanthanh",
-    due_date: "2026-03-26T19:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 22,
-    title: "Tap yoga",
-    description: "30 phut",
-    status: "hoanthanh",
-    due_date: "2026-03-27T06:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 23,
-    title: "Code backend",
-    description: "Lam API auth",
-    status: "danglam",
-    due_date: "2026-03-27T10:30:00",
-    list: "Công việc",
-  },
-  {
-    id: 24,
-    title: "Hoc English",
-    description: "30 tu vung",
-    status: "chuahoanthanh",
-    due_date: "2026-03-27T20:30:00",
-    list: "Học tập",
-  },
-  {
-    id: 25,
-    title: "Di sieu thi",
-    description: "Mua do an",
-    status: "hoanthanh",
-    due_date: "2026-03-28T09:00:00",
-    list: "Gia đình",
-  },
-  {
-    id: 26,
-    title: "Xem phim",
-    description: "Relax",
-    status: "danglam",
-    due_date: "2026-03-28T21:00:00",
-    list: "Cá nhân",
-  },
-  {
-    id: 27,
-    title: "Ve sinh nha",
-    description: "Tong don dep",
-    status: "chuahoanthanh",
-    due_date: "2026-03-29T08:30:00",
-    list: "Gia đình",
-  },
-  {
-    id: 28,
-    title: "Len ke hoach",
-    description: "Plan tuan moi",
-    status: "danglam",
-    due_date: "2026-03-29T17:00:00",
-    list: "Công việc",
-  },
+const daysOfWeek = [
+  "Thứ 2",
+  "Thứ 3",
+  "Thứ 4",
+  "Thứ 5",
+  "Thứ 6",
+  "Thứ 7",
+  "Chủ nhật",
 ];
 
-function getHour(dateString) {
-  return new Date(dateString).getHours();
-}
+// Parse date tránh lệch timezone
+const parseDate = (dateStr) => {
+  const [datePart, timePart] = dateStr.split("T");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hour, minute] = timePart.split(":").map(Number);
 
-function getDay(dateString) {
-  return new Date(dateString).getDay();
-}
+  return new Date(year, month - 1, day, hour, minute);
+};
+
+// Lấy thứ 2 đầu tuần
+const getStartOfWeek = (date) => {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - (day === 0 ? 6 : day - 1);
+  return new Date(d.setDate(diff));
+};
+
 function Week() {
-  const hours = DateTimeUtils.getHours();
-  const arrDayOfWeek = DateTimeUtils.getCurrentWeek();
+  const [tasks, setTasks] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedTaskId, setSelectedTaskId] = useState(null); // ✅ thêm
 
-  const taskMap = {};
+  const formatDate = (date) => date.toISOString().split("T")[0];
 
-  tasks.forEach((task) => {
-    const day = getDay(task.due_date);
-    const hour = getHour(task.due_date);
+  // FETCH API
+  const fetchTasks = async (date) => {
+    try {
+      const res = await getWeekTasks(formatDate(date));
+      setTasks(Array.isArray(res) ? res : []);
+    } catch (err) {
+      console.error("Fetch tasks error:", err);
+      setTasks([]);
+    }
+  };
 
-    if (!taskMap[day]) taskMap[day] = {};
-    if (!taskMap[day][hour]) taskMap[day][hour] = [];
+  useEffect(() => {
+    fetchTasks(currentDate);
+  }, [currentDate]);
 
-    taskMap[day][hour].push(task);
+  // NAVIGATION
+  const nextWeek = () => {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() + 7);
+    setCurrentDate(d);
+  };
+
+  const prevWeek = () => {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() - 7);
+    setCurrentDate(d);
+  };
+
+  const startOfWeek = getStartOfWeek(currentDate);
+
+  // GROUP TASKS
+  const groupedTasks = {};
+
+  (tasks || []).forEach((task) => {
+    if (!task?.dueDate) return;
+
+    const date = parseDate(task.dueDate);
+    const day = date.getDay() === 0 ? 6 : date.getDay() - 1;
+
+    if (!groupedTasks[day]) groupedTasks[day] = [];
+    groupedTasks[day].push(task);
+  });
+
+  // SORT TASK THEO GIỜ
+  Object.keys(groupedTasks).forEach((day) => {
+    groupedTasks[day].sort(
+      (a, b) => parseDate(a.dueDate) - parseDate(b.dueDate),
+    );
   });
 
   return (
     <div className={styles.wrapper}>
+      {/* NAV */}
+      <div className={styles.weekNav}>
+        <div className={styles.weekControls}>
+          <button onClick={prevWeek} className={styles.navBtn}>
+            ⬅
+          </button>
+          <button onClick={nextWeek} className={styles.navBtn}>
+            ➡
+          </button>
+        </div>
+
+        <div className={styles.weekLabel}>
+          {startOfWeek.toLocaleDateString("vi-VN")} -{" "}
+          {new Date(
+            startOfWeek.getFullYear(),
+            startOfWeek.getMonth(),
+            startOfWeek.getDate() + 6,
+          ).toLocaleDateString("vi-VN")}
+        </div>
+      </div>
+
       {/* HEADER */}
-      <table className={styles.headerTable}>
-        <thead>
-          <tr className={styles.header}>
-            <th></th>
-            {arrDayOfWeek.map((day) => (
-              <th key={day.id}>
-                <div>{day.title}</div>
-                <div>{day.date.toLocaleDateString("vi-VN")}</div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-      </table>
+      <div className={styles.header}>
+        {daysOfWeek.map((day, index) => {
+          const date = new Date(startOfWeek);
+          date.setDate(startOfWeek.getDate() + index);
+
+          return (
+            <div key={index} className={styles.dayHeader}>
+              <div className={styles.dayName}>{day}</div>
+              <div className={styles.dayDate}>
+                {date.getDate()}/{date.getMonth() + 1}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       {/* BODY */}
-      <div className={styles.calendar}>
-        <table>
-          <tbody>
-            {hours.map((hour) => (
-              <tr key={hour.id} className={styles.calendarDay}>
-                <td className={styles.time}>{hour.title}</td>
+      <div className={styles.body}>
+        {daysOfWeek.map((_, index) => (
+          <div key={index} className={styles.column}>
+            {(groupedTasks[index] || []).map((task) => {
+              const time = parseDate(task.dueDate).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
 
-                {arrDayOfWeek.map((day) => {
-                  const cellTasks = taskMap[day.id]?.[hour.id] || [];
-                  const isToday = DateTimeUtils.isSameDay(day.date, new Date());
-
-                  return (
-                    <td
-                      key={day.id}
-                      className={`${styles.tasks} ${
-                        isToday ? styles.todayColumn : ""
-                      }`}
-                    >
-                      <div className={styles.tasksInner}>
-                        {cellTasks.length > 0 ? (
-                          cellTasks.map((task) => (
-                            <div key={task.id}>{task.description}</div>
-                          ))
-                        ) : (
-                          <div className={styles.empty}></div>
-                        )}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              return (
+                <div
+                  key={task.id}
+                  className={styles.task}
+                  onClick={() => setSelectedTaskId(task.id)} // ✅ click mở modal
+                  style={{ backgroundColor: task.listColor || "#888" }}
+                >
+                  <div className={styles.title}>{task.title}</div>
+                  <div className={styles.time}>{time}</div>
+                  <div className={styles.list}>{task.nameList}</div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
+
+      {/* ✅ MODAL DETAIL */}
+      {selectedTaskId && (
+        <TaskDetail
+          taskId={selectedTaskId}
+          onClose={() => setSelectedTaskId(null)}
+        />
+      )}
     </div>
   );
 }

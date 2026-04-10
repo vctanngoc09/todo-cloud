@@ -124,4 +124,29 @@ public class TaskServiceImpl implements ITaskService {
         // 4. Map sang TaskDetailResponse
         return taskMapper.toDetailResponse(task);
     }
+    @Override
+    public List<TaskResponse> getTasksByWeek(LocalDate date) {
+
+        // 1. Lấy user hiện tại
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // 2. Tính đầu tuần (Monday)
+        LocalDate monday = date.with(java.time.DayOfWeek.MONDAY);
+
+        // 3. Tính cuối tuần (Sunday)
+        LocalDate sunday = date.with(java.time.DayOfWeek.SUNDAY);
+
+        // 4. Convert sang LocalDateTime
+        LocalDateTime startOfWeek = monday.atStartOfDay();
+        LocalDateTime endOfWeek = sunday.atTime(LocalTime.MAX);
+
+        // 5. Query DB
+        return taskRepository
+                .findByUserAndDueDateBetween(user, startOfWeek, endOfWeek)
+                .stream()
+                .map(taskMapper::toResponse)
+                .toList();
+    }
 }

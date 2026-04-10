@@ -49,4 +49,12 @@ public class TaskController {
     public ResponseEntity<TaskDetailResponse> getTaskDetail(@PathVariable Long id) {
         return ResponseEntity.ok(taskService.getTaskDetail(id));
     }
+    @GetMapping("/week")
+    public ResponseEntity<List<TaskResponse>> getTasksByWeek(
+            @RequestParam String date) {
+
+        LocalDate localDate = LocalDate.parse(date);
+
+        return ResponseEntity.ok(taskService.getTasksByWeek(localDate));
+    }
 }
