@@ -50,6 +50,69 @@
     background-color: #fcc419;
 }
 
+/* ===== FILTER BAR (IMPROVED) ===== */
+.filterBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+/* SEARCH BOX */
+.searchBox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    padding: 6px 10px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.searchBox:hover {
+    border-color: #ced4da;
+}
+
+.searchBox:focus-within {
+    border-color: #ffd43b;
+    box-shadow: 0 0 0 3px rgba(255, 212, 59, 0.2);
+}
+
+.searchBox input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+/* FILTER BUTTONS */
+.filterBtn {
+    border: 1px solid #e9ecef;
+    background: #fff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    color: #495057;
+}
+
+.filterBtn:hover {
+    border-color: #ffd43b;
+    color: #d4a000;
+    background: #fff9db;
+}
+
+.filterBtn.active {
+    background: #ffd43b;
+    border-color: #ffd43b;
+    color: #000;
+}
+
+/* GRID */
 .tagGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

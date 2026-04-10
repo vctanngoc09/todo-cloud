@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTag, faCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faTag,
+  faCircle,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 
 import styles from "./Tags.module.css";
 
@@ -15,6 +20,10 @@ function Tags() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
+
+  // ===== FILTER STATE =====
+  const [filter, setFilter] = useState("all"); // all | active | inactive
+  const [search, setSearch] = useState("");
 
   // ADD TAG
   const handleAddTag = async (data) => {
@@ -42,34 +51,81 @@ function Tags() {
     setShowUpdateForm(true);
   };
 
+  // ===== FILTER LOGIC =====
+  const filteredTags = tags
+    .filter((tag) => {
+      if (filter === "active") return tag.active;
+      if (filter === "inactive") return !tag.active;
+      return true;
+    })
+    .filter((tag) => tag.nameTag.toLowerCase().includes(search.toLowerCase()));
+
   return (
     <div className={styles.wrapper}>
       {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.titleGroup}>
           <h1>Quản lý Nhãn</h1>
-          <span className={styles.badge}>{tags.length} nhãn</span>
+          <span className={styles.badge}>{filteredTags.length} nhãn</span>
         </div>
 
-        <button
-          className={styles.addBtn}
-          onClick={() => setShowAddForm(true)}
-        >
+        <button className={styles.addBtn} onClick={() => setShowAddForm(true)}>
           <FontAwesomeIcon icon={faPlus} /> Thêm nhãn mới
         </button>
       </header>
 
+      {/* FILTER BAR */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+        {/* SEARCH */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <FontAwesomeIcon icon={faSearch} />
+          <input
+            type="text"
+            placeholder="Tìm nhãn..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              padding: "6px 10px",
+              border: "1px solid #ddd",
+              borderRadius: 6,
+            }}
+          />
+        </div>
+
+        {/* FILTER BUTTONS */}
+        <button
+          className={`${styles.filterBtn} ${filter === "all" ? styles.active : ""}`}
+          onClick={() => setFilter("all")}
+        >
+          Tất cả
+        </button>
+
+        <button
+          className={`${styles.filterBtn} ${filter === "active" ? styles.active : ""}`}
+          onClick={() => setFilter("active")}
+        >
+          Đang hoạt động
+        </button>
+
+        <button
+          className={`${styles.filterBtn} ${filter === "inactive" ? styles.active : ""}`}
+          onClick={() => setFilter("inactive")}
+        >
+          Đã ẩn
+        </button>
+      </div>
+
       {/* CONTENT */}
       {loading ? (
         <div className={styles.message}>Đang tải dữ liệu...</div>
-      ) : tags.length === 0 ? (
+      ) : filteredTags.length === 0 ? (
         <div className={styles.emptyState}>
           <FontAwesomeIcon icon={faTag} className={styles.emptyIcon} />
-          <p>Bạn chưa có nhãn nào. Hãy thêm nhãn để phân loại công việc!</p>
+          <p>Không tìm thấy nhãn nào.</p>
         </div>
       ) : (
         <div className={styles.tagGrid}>
-          {tags.map((tag) => (
+          {filteredTags.map((tag) => (
             <div
               key={tag.id || tag._id}
               className={styles.tagCard}
