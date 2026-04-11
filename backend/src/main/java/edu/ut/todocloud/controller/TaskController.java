@@ -64,4 +64,15 @@ public class TaskController {
         LocalDate localDate = LocalDate.parse(date);
         return ResponseEntity.ok(taskService.getTasksByMonth(localDate));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody TaskRequest taskRequest) {
+        try {
+            // Service bây giờ trả về thẳng TaskResponse
+            TaskResponse response = taskService.updateTask(id, taskRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi cập nhật Task: " + e.getMessage());
+        }
+    }
 }

@@ -79,7 +79,7 @@ public class TaskServiceImpl implements ITaskService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         // 2. Xác định mốc thời gian ngày hôm nay (00:00:00 -> 23:59:59)
-        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
         LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
 
         // 3. Truy vấn và Map sang Response
@@ -173,5 +173,36 @@ public class TaskServiceImpl implements ITaskService {
                 .stream()
                 .map(taskMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public TaskResponse updateTask(Long id, TaskRequest taskRequest) {
+        Task existingTask = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Task với ID: " + id));
+
+        existingTask.setTitle(taskRequest.getTitle());
+        existingTask.setDescription(taskRequest.getDescription());
+        existingTask.setDueDate(taskRequest.getDueDate());
+        if (taskRequest.getListId() != null) {
+            TodoList todoList = todoListRepository.findById(taskRequest.getListId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy List với ID: " + taskRequest.getListId()));
+            existingTask.setTodoList(todoList);
+        } else {
+            existingTask.setTodoList(null);
+        }
+        tagService.updateTagsForTask(taskRequest.getTagIds(), existingTask);
+        subTaskService.updateSubTasksForTask(taskRequest.getSubtasks(), existingTask);
+        Task updatedTask = taskRepository.save(existingTask);
+        return taskMapper.toResponse(updatedTask);
+    }
+
+    @Override
+    public TaskDetailResponse getTaskById(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Task với ID: " + id));
+
+        // Sử dụng mapper để trả về đầy đủ thông tin tag/subtask
+        return taskMapper.toDetailResponse(task);
     }
 }

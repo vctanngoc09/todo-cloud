@@ -1,6 +1,8 @@
 package edu.ut.todocloud.service.impl;
 
-
+import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.Objects;
 import edu.ut.todocloud.dto.request.SubTaskRequest;
 import edu.ut.todocloud.dto.response.SubTaskResponse;
 import edu.ut.todocloud.mapper.SubTaskMapper;
@@ -43,14 +45,67 @@ public class SubTaskServiceImpl implements ISubTaskService {
 
     @Override
     @Transactional
-    public void saveAllSubTasks(List<String> subtaskTitles, Task task) {
-        if (subtaskTitles == null || subtaskTitles.isEmpty()) return;
+    public void saveAllSubTasks(List<SubTaskRequest> subTaskRequests, Task task) {
+        if (subTaskRequests == null || subTaskRequests.isEmpty()) return;
 
-        List<SubTask> subTaskList = subtaskTitles.stream()
-                .map(title -> subTaskMapper.toEntityFromTitle(title, task))
+        List<SubTask> subTaskList = subTaskRequests.stream()
+                .map(req -> {
+                    SubTask subTask = subTaskMapper.toEntity(req, task);
+                    // Đảm bảo gán task cha để có ID khóa ngoại
+                    subTask.setTask(task);
+                    return subTask;
+                })
                 .toList();
 
         subTaskRepository.saveAll(subTaskList);
     }
 
+    @Override
+    @Transactional
+    public void updateSubTasksForTask(List<SubTaskRequest> subTaskRequests, Task task) {
+        // 1. Lấy danh sách subtasks hiện tại của Task từ DB
+        List<SubTask> currentSubTasks = task.getSubTasks();
+
+        // 2. Nếu request rỗng -> Xóa tất cả subtasks của task này
+        if (subTaskRequests == null || subTaskRequests.isEmpty()) {
+            if (currentSubTasks != null && !currentSubTasks.isEmpty()) {
+                subTaskRepository.deleteAll(currentSubTasks);
+            }
+            return;
+        }
+
+        // 3. Xác định các SubTask cần XÓA
+        // (Những cái có trong DB nhưng ID không xuất hiện trong danh sách gửi lên)
+        Set<Long> requestIds = subTaskRequests.stream()
+                .map(SubTaskRequest::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet()); // Sử dụng Collectors sau khi đã import
+
+        List<SubTask> toRemove = currentSubTasks.stream()
+                .filter(sub -> !requestIds.contains(sub.getId()))
+                .collect(Collectors.toList());
+
+        if (!toRemove.isEmpty()) {
+            subTaskRepository.deleteAll(toRemove);
+        }
+
+        // 4. Xử lý CẬP NHẬT hoặc THÊM MỚI
+        for (SubTaskRequest req : subTaskRequests) {
+            if (req.getId() != null) {
+                // Trường hợp CẬP NHẬT: Tìm subtask cũ trong list để update thông tin
+                currentSubTasks.stream()
+                        .filter(sub -> sub.getId().equals(req.getId()))
+                        .findFirst()
+                        .ifPresent(sub -> {
+                            sub.setTitle(req.getTitle());
+                            sub.setCompleted(req.isCompleted());
+                            subTaskRepository.save(sub);
+                        });
+            } else {
+                // Trường hợp THÊM MỚI: id == null
+                SubTask newSub = subTaskMapper.toEntity(req, task);
+                subTaskRepository.save(newSub);
+            }
+        }
+    }
 }

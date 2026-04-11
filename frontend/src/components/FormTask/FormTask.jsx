@@ -7,8 +7,8 @@ import { getTagsByUserId } from "../../api/tag";
 import { AuthService } from "../../services/auth.service";
 import { useEffect, useState } from "react";
 import AddSubtaskForm from "../AddSubtaskForm/AddSubtaskForm";
-import { createTask } from "../../api/task";
-function FormTask({ task, onClose }) {
+import { createTask, updateTask } from "../../api/task";
+function FormTask({ task, onClose, onSaveSuccess }) {
   const [lists, setLists] = useState([]);
   const [tags, setTags] = useState([]);
 
@@ -20,22 +20,56 @@ function FormTask({ task, onClose }) {
 
   // 🔥 FORM DATA
   const [taskData, setTaskData] = useState({
-    title: task?.title || "",
-    description: task?.description || "",
-    listId: task?.todoList?.id || "",
-    dueDate: task?.dueDate ? task.dueDate.split("T")[0] : "", // Lấy phần YYYY-MM-DD
-    dueTime: task?.dueDate
-      ? task.dueDate.split("T")[1].substring(0, 5)
-      : "00:00", // Lấy HH:mm
-    tagIds: task?.tags?.map((t) => t.id) || [],
+    title: "",
+    description: "",
+    listId: "",
+    dueDate: "",
+    dueTime: "00:00",
+    tagIds: [],
   });
 
+  useEffect(() => {
+    if (task) {
+      setSubtasks(task.subTasks || []);
+      setTaskData({
+        title: task.title || "",
+        description: task.description || "",
+        listId: task.listId || "",
+        dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
+        dueTime: task.dueDate
+          ? task.dueDate.split("T")[1].substring(0, 5)
+          : "00:00",
+        tagIds: task.tags?.map((t) => t.id) || [],
+      });
+    } else {
+      setSubtasks([]);
+      setTaskData({
+        title: "",
+        description: "",
+        listId: "",
+        dueDate: "",
+        dueTime: "00:00",
+        tagIds: [],
+      });
+    }
+  }, [task]);
+
   const handleAddSubtaskUI = (title) => {
-    // Tạm thời chỉ cập nhật UI để bạn thấy
-    const newSub = { id: Date.now(), title, completed: false };
+    const newSub = {
+      id: null, // id null để BE biết đây là subtask mới cần tạo
+      title: title,
+      completed: false,
+    };
     setSubtasks((prev) => [...prev, newSub]);
-    setShowSubtaskForm(false); // Đóng form sau khi add
-    console.log("Subtask mới:", title);
+    setShowSubtaskForm(false);
+  };
+
+  const handleToggleSubtask = (index) => {
+    setSubtasks((prev) =>
+      prev.map((sub, i) =>
+        i === index ? { ...sub, completed: !sub.completed } : sub,
+      ),
+    );
   };
 
   // =============================
@@ -115,19 +149,29 @@ function FormTask({ task, onClose }) {
       listId: taskData.listId || null,
       dueDate: combinedDateTime,
       tagIds: taskData.tagIds,
-      subtasks: subtasks.map((s) => s.title),
+      subtasks: subtasks,
     };
 
     try {
-      console.log("Đang gửi dữ liệu:", payload);
-      const response = await createTask(payload);
+      let response;
+      if (task?.id) {
+        // CHẾ ĐỘ CẬP NHẬT
+        console.log("Đang cập nhật Task:", task.id, payload);
+        response = await updateTask(task.id, payload);
+      } else {
+        // CHẾ ĐỘ TẠO MỚI
+        console.log("Đang tạo Task mới:", payload);
+        response = await createTask(payload);
+      }
+
       if (response) {
-        alert("Tạo Task thành công!");
+        alert(task?.id ? "Cập nhật thành công!" : "Tạo Task thành công!");
+        if (onSaveSuccess) onSaveSuccess(); // Refresh danh sách ở Today.js
         onClose();
       }
     } catch (error) {
-      console.error("Lỗi khi tạo Task:", error);
-      alert("Có lỗi xảy ra: " + (error.response?.data || error.message));
+      console.error("Lỗi khi lưu Task:", error);
+      alert("Lỗi: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -136,7 +180,9 @@ function FormTask({ task, onClose }) {
       <div className={styles.form}>
         {/* HEADER */}
         <div className={styles.header}>
-          <span className={styles.title}>Task:</span>
+          <span className={styles.title}>
+            {task?.id ? "Edit Task" : "New Task"}
+          </span>
           <FontAwesomeIcon
             icon={faXmark}
             className={styles.closeIcon}
@@ -262,15 +308,16 @@ function FormTask({ task, onClose }) {
 
           {/* 2. Danh sách subtasks hiện ở dưới nút thêm */}
           <div className={styles.subtaskList}>
-            {subtasks.map((sub) => (
-              <div key={sub.id} className={styles.subtaskItem}>
+            {subtasks.map((sub, index) => (
+              <div key={index} className={styles.subtaskItem}>
                 <input
                   type="checkbox"
-                  id={`sub-${sub.id}`}
+                  id={`sub-${index}`}
                   className={styles.checkbox}
-                  defaultChecked={sub.completed}
+                  checked={sub.completed} // Dùng checked thay vì defaultChecked
+                  onChange={() => handleToggleSubtask(index)} // Gọi hàm toggle khi click
                 />
-                <label htmlFor={`sub-${sub.id}`}>{sub.title}</label>
+                <label htmlFor={`sub-${index}`}>{sub.title}</label>
               </div>
             ))}
           </div>
@@ -281,12 +328,8 @@ function FormTask({ task, onClose }) {
           <button className={styles.deleteBtn} type="button">
             Delete Task
           </button>
-          <button
-            type="button"
-            className={styles.saveBtn}
-            onClick={handleSave} // 2. Gọi hàm handleSave thay vì console.log
-          >
-            Save changes
+          <button type="button" className={styles.saveBtn} onClick={handleSave}>
+            {task?.id ? "Update Changes" : "Save Task"}
           </button>
         </div>
       </div>

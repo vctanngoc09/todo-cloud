@@ -16,4 +16,6 @@ public interface ITaskService {
     TaskDetailResponse getTaskDetail(Long taskId);
     List<TaskResponse> getTasksByWeek(LocalDate date);
     List<TaskResponse> getTasksByMonth(LocalDate date);
+    TaskResponse updateTask(Long id, TaskRequest taskRequest);
+    TaskDetailResponse getTaskById(Long id);
 }

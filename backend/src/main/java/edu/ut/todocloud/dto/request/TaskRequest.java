@@ -10,16 +10,17 @@ public class TaskRequest {
     private String description;
     private LocalDateTime dueDate;
     private Long listId;
-    private List<String> subtasks;
+//    private List<String> subtasks;
     private List<Long> tagIds;
+    private List<SubTaskRequest> subtasks;
 
-    public TaskRequest(String title, String description, LocalDateTime dueDate, Long listId, List<String> subtasks, List<Long> tagIds) {
+    public TaskRequest(String title, String description, LocalDateTime dueDate, Long listId, List<Long> tagIds, List<SubTaskRequest> subtasks) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.listId = listId;
-        this.subtasks = subtasks;
         this.tagIds = tagIds;
+        this.subtasks = subtasks;
     }
 
     public String getTitle() {
@@ -54,19 +55,19 @@ public class TaskRequest {
         this.listId = listId;
     }
 
-    public List<String> getSubtasks() {
-        return subtasks;
-    }
-
-    public void setSubtasks(List<String> subtasks) {
-        this.subtasks = subtasks;
-    }
-
     public List<Long> getTagIds() {
         return tagIds;
     }
 
     public void setTagIds(List<Long> tagIds) {
         this.tagIds = tagIds;
+    }
+
+    public List<SubTaskRequest> getSubtasks() {
+        return subtasks;
+    }
+
+    public void setSubtasks(List<SubTaskRequest> subtasks) {
+        this.subtasks = subtasks;
     }
 }

@@ -2,7 +2,7 @@ import styles from "./Today.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import FormTask from "../FormTask/FormTask";
-import { getTodayTasks } from "../../api/task";
+import { getTaskDetail, getTodayTasks } from "../../api/task";
 import {
   faAngleRight,
   faBusinessTime,
@@ -43,6 +43,20 @@ function Today() {
     return date.toLocaleDateString("vi-VN");
   };
 
+  const handleTaskClick = async (taskId) => {
+    try {
+      setLoading(true);
+      const detailData = await getTaskDetail(taskId); // Gọi API lấy đầy đủ tags và subtasks
+      setSelectedTask(detailData);
+      setShowForm(true);
+    } catch (error) {
+      console.error("Lỗi khi lấy chi tiết task:", error);
+      alert("Không thể tải thông tin chi tiết công việc.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>
@@ -70,10 +84,7 @@ function Today() {
               <button
                 key={task.id}
                 className={styles.item}
-                onClick={() => {
-                  setSelectedTask(task);
-                  setShowForm(true);
-                }}
+                onClick={() => handleTaskClick(task.id)} // Sử dụng hàm handleTaskClick mới
               >
                 <div className={styles.itemtop}>
                   <div className={styles.itemleft}>

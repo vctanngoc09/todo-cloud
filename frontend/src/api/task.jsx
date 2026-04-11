@@ -6,6 +6,10 @@ export const createTask = (taskData) => {
   return axiosInstance.post("/tasks", taskData);
 };
 
+export const updateTask = (id, taskData) => {
+  return axiosInstance.put(`/tasks/${id}`, taskData);
+};
+
 // Các hàm bổ sung sau này
 export const getTodayTasks = () => {
   return axiosInstance.get("/tasks/today");

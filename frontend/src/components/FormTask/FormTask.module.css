@@ -2,6 +2,7 @@
   width: 360px;
   margin-left: 20px;
   height: 100%;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
 }
 
 /* FORM */
@@ -10,7 +11,7 @@
   flex-direction: column;
   gap: 12px;
 
-  background: #f9fafb;
+  background: rgb(248, 248, 248);
   border-radius: 20px;
   padding: 20px;
   height: 100%;

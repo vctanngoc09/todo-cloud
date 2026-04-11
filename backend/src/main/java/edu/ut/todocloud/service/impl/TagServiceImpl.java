@@ -15,7 +15,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,5 +86,48 @@ public class TagServiceImpl implements ITagService {
         return tagRepository.findByUserIdAndActiveTrue(userId).stream()
                 .map(TagMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updateTagsForTask(List<Long> newTagIds, Task task) {
+        // 1. Lấy danh sách TaskTag hiện tại từ Database của Task này
+        List<TaskTag> currentTaskTags = taskTagRepository.findByTask(task);
+
+        // Nếu danh sách mới rỗng, xóa tất cả tag cũ của task này
+        if (newTagIds == null || newTagIds.isEmpty()) {
+            taskTagRepository.deleteAll(currentTaskTags);
+            return;
+        }
+
+        // 2. Chuyển list ID mới thành Set để tra cứu nhanh
+        Set<Long> newTagIdSet = new HashSet<>(newTagIds);
+
+        // 3. Xác định các Tag cần XÓA (Có trong DB nhưng không có trong Request mới)
+        List<TaskTag> tagsToRemove = currentTaskTags.stream()
+                .filter(tt -> !newTagIdSet.contains(tt.getTag().getId()))
+                .collect(Collectors.toList());
+
+        // 4. Xác định các Tag ID cần THÊM MỚI (Có trong Request nhưng chưa có trong DB)
+        Set<Long> existingTagIds = currentTaskTags.stream()
+                .map(tt -> tt.getTag().getId())
+                .collect(Collectors.toSet());
+
+        List<TaskTag> tagsToAdd = newTagIds.stream()
+                .filter(tagId -> !existingTagIds.contains(tagId))
+                .map(tagId -> {
+                    Tag tag = tagRepository.findById(tagId)
+                            .orElseThrow(() -> new RuntimeException("Tag không tồn tại: " + tagId));
+                    return TagMapper.toTaskTagEntity(tag, task);
+                })
+                .collect(Collectors.toList());
+
+        // 5. Thực thi lưu và xóa
+        if (!tagsToRemove.isEmpty()) {
+            taskTagRepository.deleteAll(tagsToRemove);
+        }
+        if (!tagsToAdd.isEmpty()) {
+            taskTagRepository.saveAll(tagsToAdd);
+        }
     }
 }
