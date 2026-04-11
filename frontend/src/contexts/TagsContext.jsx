@@ -1,11 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthService } from "../services/auth.service";
 
-import {
-  getTagsByUserId,
-  createTag,
-  updateTag,
-} from "../api/tag";
+import { getTagsByUserId, createTag, updateTag } from "../api/tag";
 
 const TagsContext = createContext();
 
@@ -37,7 +33,16 @@ export const TagsProvider = ({ children }) => {
 
   // ================= ADD =================
   const addTag = async (data) => {
-    const newTag = await createTag({ ...data, userId });
+    // Lấy lại user một lần nữa bên trong hàm để chắc chắn có ID
+    const currentUser = AuthService.getUser();
+    const currentUserId = currentUser?.id;
+
+    if (!currentUserId) {
+      throw new Error("Không tìm thấy UserId. Vui lòng đăng nhập lại.");
+    }
+
+    // Gửi kèm userId vào payload
+    const newTag = await createTag({ ...data, userId: currentUserId });
     setTags((prev) => [...prev, newTag]);
     return newTag;
   };
@@ -52,7 +57,7 @@ export const TagsProvider = ({ children }) => {
       prev.map((t) => {
         const tid = t.id || t._id;
         return tid === id ? { ...t, ...updated } : t;
-      })
+      }),
     );
 
     return updated;
