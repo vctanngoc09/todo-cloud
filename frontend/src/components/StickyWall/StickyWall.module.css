@@ -1,63 +1,234 @@
 .wrapper {
+  padding: 30px;
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
+}
+
+/* ===== FORM ===== */
+.form {
+  max-width: 420px;
+  background: rgba(209, 226, 224, 0.75);
+  backdrop-filter: blur(10px);
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   display: flex;
-  width: 100%;
-  height: 100%;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.left {
-  flex: 1;
-  padding: 20px;
+/* INPUT STYLE (PRO) */
+.form input,
+.form textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  outline: none;
+  font-size: 14px;
+  background: rgba(241, 243, 233, 0.95);
+  transition: all 0.25s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.right {
-  width: 350px;
+.form input:hover,
+.form textarea:hover {
+  border-color: rgba(37, 99, 235, 0.4);
 }
 
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.form input:focus,
+.form textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  transform: translateY(-1px);
 }
 
-/* ADD BUTTON */
-.addBtn {
-  margin: 15px 0;
-  padding: 10px;
+.form textarea {
+  min-height: 100px;
+  resize: none;
+  line-height: 1.4;
+}
+
+/* COLOR PICKER */
+.form input[type="color"] {
+  width: 90px;
+  height: 50px;
+  padding: 0;
   border: none;
-  background-color: #f5c542;
-  border-radius: 8px;
+  border-radius: 14px;
   cursor: pointer;
-  font-weight: 600;
+  background: transparent;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  transition: 0.2s ease;
 }
 
-/* GRID */
+/* remove default browser border */
+.form input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 14px;
+}
+
+.form input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 14px;
+}
+
+/* Firefox */
+.form input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 14px;
+}
+
+/* hover đẹp hơn */
+.form input[type="color"]:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+}
+
+.form input[type="color"]:hover {
+  transform: scale(1.05);
+}
+
+/* ===== BUTTONS ===== */
+.form button {
+  padding: 11px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+/* NEW NOTE BUTTON (UPGRADED) */
+.form button:first-of-type {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: rgb(243, 119, 119);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+.form button:first-of-type:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+}
+
+.form button:first-of-type:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* CANCEL BUTTON */
+.form button:last-of-type {
+  background: #f5f5ea;
+}
+
+.form button:last-of-type:hover {
+  background: hsl(184, 89%, 53%);
+}
+
+/* ===== LIST ===== */
+.listSection h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* ===== GRID ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
 }
 
-/* CARD NOTE */
+/* ===== CARD ===== */
 .card {
-  background-color: #fff8dc;
-  padding: 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  min-height: 100px;
-  transition: 0.2s;
+  position: relative;
+  padding: 14px;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: 0.25s ease;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.3);
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
 }
 
 .card:hover {
-  transform: scale(1.03);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
 }
 
 .card h3 {
-  font-size: 14px;
-  margin-bottom: 5px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .card p {
-  font-size: 13px;
-  color: #555;
+  font-size: 14px;
+  white-space: pre-wrap;
+  color: #333;
+}
+
+/* ===== ACTIONS ===== */
+.actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* EDIT */
+.actions button:first-child {
+  background: #ffcc80;
+  color: #333;
+}
+
+.actions button:first-child:hover {
+  background: #ffb74d;
+  transform: scale(1.05);
+}
+
+/* DELETE */
+.actions button:last-child {
+  background: #ff6b6b;
+  color: white;
+}
+
+.actions button:last-child:hover {
+  background: #ff4d4d;
+  transform: scale(1.05);
+}
+
+/* EMPTY */
+.listSection p {
+  color: #777;
+  font-style: italic;
 }
