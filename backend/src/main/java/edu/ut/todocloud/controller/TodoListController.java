@@ -16,6 +16,12 @@ public class TodoListController {
     @Autowired
     private ITodoListService todoListService;
 
+    @GetMapping("/active")
+    public ResponseEntity<List<TodoListResponse>> getAllListsActive() {
+        List<TodoListResponse> myLists = todoListService.getAllMyListsActive();
+        return ResponseEntity.ok(myLists);
+    }
+
     @GetMapping
     public ResponseEntity<List<TodoListResponse>> getAllLists() {
         List<TodoListResponse> myLists = todoListService.getAllMyLists();
@@ -25,5 +31,20 @@ public class TodoListController {
     @PostMapping
     public ResponseEntity<TodoListResponse> createList(@RequestBody TodoListRequest request) {
         return ResponseEntity.ok(todoListService.createList(request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteList(@PathVariable Long id) {
+        todoListService.deleteList(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TodoListResponse> updateList(
+            @PathVariable Long id,
+            @RequestBody TodoListRequest request) {
+
+        TodoListResponse updatedList = todoListService.updateList(id, request);
+        return ResponseEntity.ok(updatedList);
     }
 }

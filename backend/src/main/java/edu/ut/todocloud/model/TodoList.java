@@ -22,6 +22,9 @@ public class TodoList {
     @Column(nullable = true)
     private String color;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean active = true;
+
     @OneToMany(mappedBy = "todoList", cascade = CascadeType.ALL)
     private List<Task> tasks;
 

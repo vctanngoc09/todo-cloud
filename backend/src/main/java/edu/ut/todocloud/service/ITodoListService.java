@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface ITodoListService {
     TodoListResponse createList(TodoListRequest request);
+    List<TodoListResponse> getAllMyListsActive();
     List<TodoListResponse> getAllMyLists();
+    void deleteList(Long listId);
+    TodoListResponse updateList(Long listId, TodoListRequest request);
 }

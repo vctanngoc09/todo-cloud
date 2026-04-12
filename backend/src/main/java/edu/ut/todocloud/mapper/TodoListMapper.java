@@ -14,7 +14,8 @@ public class TodoListMapper {
         TodoList todoList = new TodoList();
         todoList.setNameList(request.getNameList());
         todoList.setColor(request.getColor());
-        todoList.setUser(user); // Gán chủ sở hữu cho List
+        todoList.setUser(user);
+        todoList.setActive(true);
         return todoList;
     }
 
@@ -24,6 +25,7 @@ public class TodoListMapper {
         response.setId(todoList.getId());
         response.setNameList(todoList.getNameList());
         response.setColor(todoList.getColor());
+        response.setActive(todoList.isActive());
         return response;
     }
 }

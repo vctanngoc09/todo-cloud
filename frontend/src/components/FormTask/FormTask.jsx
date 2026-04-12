@@ -2,7 +2,7 @@ import styles from "./FormTask.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faClock, faCalendarDays } from "@fortawesome/free-regular-svg-icons";
-import { getAllLists } from "../../api/list";
+import { getAllListsActive } from "../../api/list";
 import { getTagsByUserId } from "../../api/tag";
 import { AuthService } from "../../services/auth.service";
 import { useEffect, useState } from "react";
@@ -78,7 +78,7 @@ function FormTask({ task, onClose, onSaveSuccess }) {
   useEffect(() => {
     const fetchLists = async () => {
       try {
-        const res = await getAllLists();
+        const res = await getAllListsActive();
         setLists(res);
       } catch (error) {
         console.error("Lỗi list:", error);

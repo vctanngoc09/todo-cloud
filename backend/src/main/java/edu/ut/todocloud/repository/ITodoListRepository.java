@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface ITodoListRepository extends JpaRepository<TodoList, Long> {
     List<TodoList> findByUser(User user);
+    List<TodoList> findByUserAndActiveTrue(User user);
 }

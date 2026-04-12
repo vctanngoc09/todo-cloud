@@ -6,4 +6,5 @@ import lombok.Data;
 public class TodoListRequest {
     private String nameList;
     private String color;
+    private boolean active;
 }

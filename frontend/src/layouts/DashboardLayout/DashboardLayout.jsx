@@ -20,10 +20,11 @@ import StickyWall from "../../components/StickyWall/StickyWall";
 import AddListForm from "../../components/AddListForm/AddListForm";
 import AddTagForm from "../../components/AddTagForm/AddTagForm";
 import Tags from "../../components/Tags/Tags";
+import Lists from "../../components/Lists/Lists";
 
 import { AuthService } from "../../services/auth.service";
-import { getAllLists, createList } from "../../api/list";
 
+import { useLists } from "../../contexts/ListsContext.jsx";
 import { useTags } from "../../contexts/TagsContext.jsx";
 
 function DashboardLayout() {
@@ -33,14 +34,13 @@ function DashboardLayout() {
   const [showListForm, setShowListForm] = useState(false);
   const [showTagForm, setShowTagForm] = useState(false);
 
-  const [lists, setLists] = useState([]);
   const [showAllLists, setShowAllLists] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
 
   const { tags, addTag } = useTags();
+  const { lists, addList } = useLists();
 
   const user = AuthService.getUser();
-  const userId = user?.id;
 
   const COMPONENTS = {
     [IDTASKS.Upcoming]: <Upcoming />,
@@ -48,6 +48,7 @@ function DashboardLayout() {
     [IDTASKS.Calendar]: <Calendar />,
     [IDTASKS.StickyWall]: <StickyWall />,
     [IDTASKS.Tags]: <Tags />,
+    [IDTASKS.List]: <Lists />,
   };
 
   const LISTS_LIMIT = 3;
@@ -56,10 +57,12 @@ function DashboardLayout() {
   // =========================
   // CHỈ LẤY TAG ACTIVE
   // =========================
+  const activeLists = lists.filter((list) => list.active);
   const activeTags = tags.filter((tag) => tag.active);
 
-  const visibleLists = showAllLists ? lists : lists.slice(0, LISTS_LIMIT);
-
+  const visibleLists = showAllLists
+    ? activeLists
+    : activeLists.slice(0, LISTS_LIMIT);
   const visibleTags = showAllTags
     ? activeTags
     : activeTags.slice(0, TAGS_LIMIT);
@@ -79,27 +82,12 @@ function DashboardLayout() {
   // ADD LIST
   const handleAddList = async (data) => {
     try {
-      const newList = await createList(data);
-      setLists((prev) => [...prev, newList]);
+      await addList(data); // Context sẽ tự lo việc gọi API và cập nhật state lists toàn cục
       setShowListForm(false);
     } catch (error) {
       alert("Lỗi khi tạo danh sách!");
     }
   };
-
-  // LOAD LISTS
-  useEffect(() => {
-    const fetchLists = async () => {
-      try {
-        const res = await getAllLists();
-        setLists(res);
-      } catch (error) {
-        console.error("Lỗi lấy danh sách:", error);
-      }
-    };
-
-    fetchLists();
-  }, []);
 
   return (
     <div className={styles.wrapper}>

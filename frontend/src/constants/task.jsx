@@ -5,6 +5,7 @@ import {
   faCalendarDays,
   faAnglesRight,
   faTags,
+  faTableList,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const IDTASKS = {
@@ -13,6 +14,7 @@ export const IDTASKS = {
   Calendar: "Calendar",
   StickyWall: "StickyWall",
   Tags: "Tags",
+  List: "List",
 };
 
 export const TASKS = [
@@ -36,10 +38,16 @@ export const TASKS = [
     title: "Ghi chú",
     icon: <FontAwesomeIcon icon={faNoteSticky} />,
   },
-  
+
   {
     id: IDTASKS.Tags,
     title: "Quản lý Tags",
     icon: <FontAwesomeIcon icon={faTags} />,
+  },
+
+  {
+    id: IDTASKS.List,
+    title: "Quản lý List",
+    icon: <FontAwesomeIcon icon={faTableList} />,
   },
 ];
