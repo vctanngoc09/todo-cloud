@@ -3,6 +3,7 @@ import { AuthService } from "../services/auth.service";
 
 // Sử dụng biến môi trường hoặc ghi đè trực tiếp nếu chưa có file .env
 const baseURL = import.meta.env.VITE_API_URL;
+console.log("BASE URL:", baseURL);
 
 const axiosInstance = axios.create({
   baseURL: baseURL,

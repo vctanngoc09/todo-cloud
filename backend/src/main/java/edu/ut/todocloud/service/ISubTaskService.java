@@ -11,4 +11,6 @@ public interface ISubTaskService {
     SubTaskResponse createSubTask(SubTaskRequest request);
     void saveAllSubTasks(List<SubTaskRequest> subTaskRequests, Task task);
     void updateSubTasksForTask(List<SubTaskRequest> subTaskRequests, Task task);
+    SubTaskResponse updateSubTask(Long id, SubTaskRequest request);
+    void deleteSubTask(Long id);
 }

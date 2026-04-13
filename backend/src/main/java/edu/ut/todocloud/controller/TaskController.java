@@ -75,4 +75,10 @@ public class TaskController {
             return ResponseEntity.badRequest().body("Lỗi khi cập nhật Task: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
 }

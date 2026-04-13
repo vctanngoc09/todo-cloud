@@ -10,12 +10,11 @@
   min-height: 100vh;
   background: #ffffff;
   color: #000000;
-  font-family: "DM Sans", sans-serif;
 }
 
 /* Header */
 .header {
-  max-width: 680px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 28px 20px 20px; 
 }
@@ -26,7 +25,6 @@
   margin-bottom: 14px;
 }
 .titleRow h1 {
-  font-family: "DM Sans", sans-serif;
   font-size: 28px;
   font-weight: 800;
 }
@@ -55,7 +53,6 @@
   border: 1px solid rgba(255,255,255,0.08);
   background: transparent;
   color: #555c75;
-  font-family: "DM Sans", sans-serif;
   font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
@@ -73,28 +70,24 @@
 
 /* Main */
 .main {
-  max-width: 680px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 20px 100px;
 }
 
-.group {
-  margin-bottom: 24px;
-}
-.gLabel {
+/* .gLabel {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
 .gLabel span:first-child {
-  font-family: "DM Sans", sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #555c75;
-}
+} */
 .count {
   font-size: 11px;
   color: #555c75;
@@ -103,6 +96,22 @@
   border-radius: 10px;
 }
 
+.splitlayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  min-height: 480px;
+}
+
+.leftcol {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 10px 20px 0 10px;
+}
+.rightcol {
+  padding: 10px 10px 0 20px;
+}
 /* Card */
 .card {
   display: flex;
@@ -220,7 +229,7 @@
   flex-shrink: 0;
 }
 
-/* Modal */
+/* ADD TASK FORM */
 .overlay {
   position: fixed;
   inset: 0;
@@ -238,7 +247,7 @@
 }
 
 .modal {
-  background: #cccccd;
+  background: #fff;
   border: 3px solid rgba(0, 0, 0, 0.6);
   border-radius: 20px 20px 0 0;
   width: 100%;
@@ -260,7 +269,6 @@
   justify-content: space-between;
 }
 .mHead h2 {
-  font-family: "DM Sans", sans-serif;
   font-size: 17px;
   font-weight: 600;
 }
@@ -356,3 +364,43 @@ input[type="date"], input[type="time"] {
 .submit:hover {
   opacity: 0.88;
 }
+
+.allert {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh
+}
+
+.allert p {
+  color : #555c75;
+}
+
+/* ── Thêm vào cuối Upcoming.module.css ───────────────────────────────────────
+   Subtask expandable + tag picker trong AddForm
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.subToggle { display:flex;align-items:center;gap:5px;margin-top:6px;padding:0;background:transparent;border:none;font-size:12px;color:#555c75;cursor:pointer; }
+.subToggle:hover { color:#000; }
+
+.subList { margin-top:8px;display:flex;flex-direction:column;gap:4px; }
+
+.subItem { display:flex;align-items:center;gap:7px;font-size:13px; }
+.subItem input[type="checkbox"] { accent-color:#4f9cf9;width:14px;height:14px;flex-shrink:0; }
+
+.subDel { background:transparent;border:none;color:#ccc;cursor:pointer;font-size:11px;padding:0 2px; }
+.subDel:hover { color:#f97b4f; }
+
+.subAdd { display:flex;gap:4px;align-items:center;margin-top:2px; }
+.subInput { flex:1;font-size:13px;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;outline:none;color:#000;background:#fff; }
+.subInput:focus { border-color:#4f9cf9; }
+.subConfirm { background:#4f9cf9;color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:13px;cursor:pointer; }
+.subCancel { background:transparent;color:#555c75;border:none;font-size:13px;cursor:pointer; }
+
+.subAddBtn { margin-top:6px;display:flex;align-items:center;gap:5px;padding:0;background:transparent;border:none;font-size:12px;color:#555c75;cursor:pointer; }
+.subAddBtn:hover { color:#4f9cf9; }
+
+.tagPicker { display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px; }
+.tagChip { padding:5px 12px;border-radius:20px;border:1px solid #d1d5db;background:transparent;font-size:13px;cursor:pointer;color:#374151;transition:all 0.15s; }
+.tagChip:hover { border-color:#9ca3af; }
+.tagChipActive { font-weight:500; }
