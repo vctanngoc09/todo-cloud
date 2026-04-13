@@ -3,7 +3,7 @@ import styles from "./AddTagForm.module.css";
 import { TAG_COLORS } from "../../constants/tagColors";
 
 
-function AddTagForm({ onClose, onAdd }) {
+function AddTagForm({ onClose, onAdd, inline = false }) {
   const [tagName, setTagName] = useState("");
   const [color, setColor] = useState(TAG_COLORS[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,73 +32,78 @@ function AddTagForm({ onClose, onAdd }) {
     }
   };
 
+  const formContent = (
+    <>
+      {/* Chỉ hiện tiêu đề khi ở chế độ inline (modal thì có heading riêng) */}
+      {inline && <h3 className={styles.inlineTitle}>Thêm nhãn mới</h3>}
+
+      {/* NAME */}
+      <div className={styles.field}>
+        <label>Tên nhãn</label>
+        <input
+          type="text"
+          placeholder="Nhập tên nhãn..."
+          value={tagName}
+          onChange={(e) => setTagName(e.target.value)}
+          disabled={isSubmitting}
+          autoFocus
+        />
+      </div>
+
+      {/* PREVIEW */}
+      <div className={styles.preview}>
+        <span
+          className={styles.previewTag}
+          style={{ backgroundColor: color }}
+        >
+          {tagName || "Tên nhãn"}
+        </span>
+      </div>
+
+      {/* COLOR PALETTE */}
+      <div className={styles.field}>
+        <label>Màu sắc</label>
+        <div className={styles.colorList}>
+          {TAG_COLORS.map((c) => (
+            <div
+              key={c}
+              className={`${styles.colorItem} ${
+                color === c ? styles.activeColor : ""
+              }`}
+              style={{ backgroundColor: c }}
+              onClick={() => !isSubmitting && setColor(c)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ACTIONS */}
+      <div className={styles.actions}>
+        <button type="button" onClick={onClose} disabled={isSubmitting}>
+          Hủy
+        </button>
+        <button type="button" onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? "Đang tạo..." : "Tạo nhãn"}
+        </button>
+      </div>
+    </>
+  );
+
+  // ── Inline mode: bọc bằng div đơn giản, không có overlay ──────────────────
+  if (inline) {
+    return (
+      <div className={styles.inlineContainer}>
+        {formContent}
+      </div>
+    );
+  }
+
+  // ── Normal mode: overlay + modal (giữ nguyên như cũ) ──────────────────────
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h2>Thêm nhãn mới</h2>
-
-        {/* NAME */}
-        <div className={styles.field}>
-          <label>Tên nhãn</label>
-          <input
-            type="text"
-            placeholder="Nhập tên nhãn..."
-            value={tagName}
-            onChange={(e) => setTagName(e.target.value)}
-            disabled={isSubmitting}
-            autoFocus
-          />
-        </div>
-
-        {/* PREVIEW */}
-        <div className={styles.preview}>
-          <span
-            className={styles.previewTag}
-            style={{ backgroundColor: color }}
-          >
-            {tagName || "Tên nhãn"}
-          </span>
-        </div>
-
-        {/* COLOR PALETTE */}
-        <div className={styles.field}>
-          <label>Màu sắc</label>
-
-          <div className={styles.colorList}>
-            {TAG_COLORS.map((c) => (
-              <div
-                key={c}
-                className={`${styles.colorItem} ${
-                  color === c ? styles.activeColor : ""
-                }`}
-                style={{ backgroundColor: c }}
-                onClick={() => !isSubmitting && setColor(c)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* ACTIONS */}
-        <div className={styles.actions}>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            Hủy
-          </button>
-
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Đang tạo..." : "Tạo nhãn"}
-          </button>
-        </div>
+        {formContent}
       </div>
     </div>
   );

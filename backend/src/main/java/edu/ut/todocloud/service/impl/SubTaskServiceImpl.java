@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.lang.Override;
 
 @Service
 public class SubTaskServiceImpl implements ISubTaskService {
@@ -107,5 +108,26 @@ public class SubTaskServiceImpl implements ISubTaskService {
                 subTaskRepository.save(newSub);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public SubTaskResponse updateSubTask(Long id, SubTaskRequest request) {
+        SubTask sub = subTaskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy SubTask với ID: " + id));
+        if (request.getTitle() != null && !request.getTitle().isBlank()) {
+            sub.setTitle(request.getTitle());
+        }
+        sub.setCompleted(request.isCompleted());
+        return subTaskMapper.toResponse(subTaskRepository.save(sub));
+    }
+ 
+    @Override
+    @Transactional
+    public void deleteSubTask(Long id) {
+        if (!subTaskRepository.existsById(id)) {
+            throw new RuntimeException("Không tìm thấy SubTask với ID: " + id);
+        }
+        subTaskRepository.deleteById(id);
     }
 }

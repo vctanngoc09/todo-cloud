@@ -205,4 +205,15 @@ public class TaskServiceImpl implements ITaskService {
         // Sử dụng mapper để trả về đầy đủ thông tin tag/subtask
         return taskMapper.toDetailResponse(task);
     }
+
+    @Override
+    @Transactional
+    public void deleteTask(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Task với ID: " + id));
+
+        // Task.subTasks và Task.taskTags đã có CascadeType.ALL
+        // → Hibernate tự xóa sub_tasks và task_tags liên quan khi xóa Task
+        taskRepository.delete(task);
+    }
 }

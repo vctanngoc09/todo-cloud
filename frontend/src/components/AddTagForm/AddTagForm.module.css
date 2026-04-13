@@ -140,3 +140,18 @@
 .actions button[type="button"]:last-child:hover {
   background: #fcc419;
 }
+
+.inlineContainer {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #f9fafb;
+}
+
+.inlineTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: #374151;
+}

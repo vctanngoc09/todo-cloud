@@ -14,6 +14,8 @@ public class TaskRequest {
     private List<Long> tagIds;
     private List<SubTaskRequest> subtasks;
 
+    public TaskRequest() {}
+
     public TaskRequest(String title, String description, LocalDateTime dueDate, Long listId, List<Long> tagIds, List<SubTaskRequest> subtasks) {
         this.title = title;
         this.description = description;
