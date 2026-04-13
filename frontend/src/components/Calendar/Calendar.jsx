@@ -33,7 +33,7 @@ function Calendar() {
           <button
             key={option.key}
             onClick={() => setActive(option.key)}
-            className={` ${option.key === active ? styles.active : ""}`}
+            className={`${styles.button} ${option.key === active ? styles.active : ""}`}
           >
             {option.label}
           </button>

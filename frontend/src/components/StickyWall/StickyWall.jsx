@@ -6,7 +6,18 @@ import {
   createStickyNote,
   updateStickyNote,
   deleteStickyNote,
-} from "../../api/stickynote"; // chỉnh lại path nếu khác
+} from "../../api/stickynote";
+
+const COLORS = [
+  "#FDE68A", // vàng nhạt
+  "#FCA5A5", // đỏ pastel
+  "#FDBA74", // cam nhẹ
+  "#86EFAC", // xanh lá dịu
+  "#7DD3FC", // xanh da trời
+  "#93C5FD", // xanh dương nhạt
+  "#C4B5FD", // tím nhẹ
+  "#F9A8D4", // hồng pastel
+];
 
 function StickyWall() {
   const [notes, setNotes] = useState([]);
@@ -14,19 +25,18 @@ function StickyWall() {
 
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [color, setColor] = useState("#fff200");
+  const [color, setColor] = useState(COLORS[0]);
 
   const [editId, setEditId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
-  // GET LIST
   const fetchNotes = async () => {
     try {
       setLoading(true);
-
       const res = await getMyStickyNotes();
       setNotes(Array.isArray(res) ? res : []);
     } catch (err) {
-      console.error("Load notes error:", err);
+      console.error(err);
       setNotes([]);
     } finally {
       setLoading(false);
@@ -37,16 +47,20 @@ function StickyWall() {
     fetchNotes();
   }, []);
 
-  // RESET FORM
   const resetForm = () => {
     setTitle("");
     setText("");
-    setColor("#fff200");
+    setColor(COLORS[0]);
     setEditId(null);
+    setShowForm(false);
   };
 
-  // CREATE / UPDATE
   const handleSave = async () => {
+    if (!title.trim() && !text.trim()) {
+      alert("Vui lòng nhập nội dung!");
+      return;
+    }
+
     const payload = { title, text, color };
 
     try {
@@ -59,87 +73,109 @@ function StickyWall() {
       resetForm();
       fetchNotes();
     } catch (err) {
-      console.error("Save error:", err);
+      console.error(err);
     }
   };
 
-  // EDIT
-  const handleEdit = (note) => {
-    setEditId(note.id);
-    setTitle(note.title || "");
-    setText(note.text || "");
-    setColor(note.color || "#fff200");
+  const handleOpen = (note) => {
+    if (note) {
+      setEditId(note.id);
+      setTitle(note.title || "");
+      setText(note.text || "");
+      setColor(note.color || COLORS[0]);
+    } else {
+      resetForm();
+      setColor(COLORS[Math.floor(Math.random() * COLORS.length)]);
+      setShowForm(true);
+      return;
+    }
+
+    setShowForm(true);
   };
 
-  // DELETE (CONFIRM ADDED)
-  const handleDelete = async (id) => {
-    const isConfirm = window.confirm("Bạn có muốn xóa ghi chú này không?");
-
-    if (!isConfirm) return;
+  const handleDelete = async () => {
+    if (!window.confirm("Xóa ghi chú này?")) return;
 
     try {
-      await deleteStickyNote(id);
+      await deleteStickyNote(editId);
+      resetForm();
       fetchNotes();
     } catch (err) {
-      console.error("Delete error:", err);
+      console.error(err);
     }
   };
 
   return (
     <div className={styles.wrapper}>
-      {/* FORM */}
-      <div className={styles.form}>
-        <input
-          value={title}
-          placeholder="Title"
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      <div className={styles.grid}>
+        {notes.map((note) => (
+          <div
+            key={note.id}
+            className={styles.card}
+            style={{ backgroundColor: note.color }}
+            onClick={() => handleOpen(note)}
+          >
+            <h3>{note.title || "No title"}</h3>
+            <p>{note.text}</p>
+          </div>
+        ))}
 
-        <textarea
-          value={text}
-          placeholder="Write something..."
-          onChange={(e) => setText(e.target.value)}
-        />
-
-        <input
-          type="color"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-        />
-
-        <button onClick={handleSave}>
-          {editId ? "Update Note" : "New Note"}
-        </button>
-
-        {editId && <button onClick={resetForm}>Cancel</button>}
-      </div>
-
-      {/* LIST */}
-      <div className={styles.listSection}>
-        <h2>My Notes</h2>
-
-        {loading && <p>Loading...</p>}
-
-        {!loading && notes.length === 0 && <p>Chưa có ghi chú nào 👀</p>}
-
-        <div className={styles.grid}>
-          {notes.map((note) => (
-            <div
-              key={note.id}
-              className={styles.card}
-              style={{ backgroundColor: note.color || "#fff" }}
-            >
-              <h3>{note.title || "No title"}</h3>
-              <p>{note.text || ""}</p>
-
-              <div className={styles.actions}>
-                <button onClick={() => handleEdit(note)}>Edit</button>
-                <button onClick={() => handleDelete(note.id)}>Delete</button>
-              </div>
-            </div>
-          ))}
+        {/* ADD */}
+        <div className={styles.addCard} onClick={() => handleOpen(null)}>
+          +
         </div>
       </div>
+
+      {/* MODAL */}
+      {showForm && (
+        <div className={styles.modal}>
+          <div className={styles.form}>
+            <div className={styles.close} onClick={resetForm}>
+              ×
+            </div>
+
+            <h3>{editId ? "Cập nhật Note" : "Note mới"}</h3>
+
+            <input
+              value={title}
+              placeholder="Title"
+              onChange={(e) => setTitle(e.target.value)}
+            />
+
+            <textarea
+              value={text}
+              placeholder="Write something..."
+              onChange={(e) => setText(e.target.value)}
+            />
+
+            {/* COLOR PICKER */}
+            <div className={styles.colorPicker}>
+              {COLORS.map((c) => (
+                <div
+                  key={c}
+                  className={`${styles.colorCircle} ${
+                    color === c ? styles.activeColor : ""
+                  }`}
+                  style={{ backgroundColor: c }}
+                  onClick={() => setColor(c)}
+                />
+              ))}
+            </div>
+
+            <div className={styles.formActions}>
+              <button onClick={handleSave}>
+                {editId ? "Cập nhật" : "Tạo"}
+              </button>
+
+              {editId && (
+                <button className={styles.delete} onClick={handleDelete}>
+                  Xóa
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
