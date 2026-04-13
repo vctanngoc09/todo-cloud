@@ -29,8 +29,6 @@ public class TagController {
     }
     @PostMapping
     public ResponseEntity<TagResponse> createTag(@RequestBody TagRequest request) {
-        System.out.println("111111111111111111111111111111111111111111111111");
-        System.out.println(request.isActive());
         return new ResponseEntity<>(tagService.createTag(request), HttpStatus.CREATED);
     }
 

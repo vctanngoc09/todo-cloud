@@ -13,11 +13,11 @@ import edu.ut.todocloud.repository.IUserRepository;
 import edu.ut.todocloud.service.ITagService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +28,22 @@ public class TagServiceImpl implements ITagService {
     private final IUserRepository userRepository;
     private final ITaskTagRepository taskTagRepository;
 
+    // ================= HELPER =================
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    private void validateTagOwnership(Tag tag, User user) {
+        if (!tag.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Bạn không có quyền thao tác tag này");
+        }
+    }
+
+    // ================= CRUD =================
+
     @Override
     public List<TagResponse> getAllTagsByUserId(Long userId) {
         return tagRepository.findByUserId(userId).stream()
@@ -37,52 +53,63 @@ public class TagServiceImpl implements ITagService {
 
     @Override
     public TagResponse createTag(TagRequest request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getCurrentUser();
+
         Tag tag = TagMapper.toEntity(request, user);
         return TagMapper.toResponse(tagRepository.save(tag));
     }
 
     @Override
     public TagResponse updateTag(Long id, TagRequest request) {
+        User user = getCurrentUser();
+
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
+
+        validateTagOwnership(tag, user);
 
         tag.setNameTag(request.getNameTag());
         tag.setColor(request.getColor());
         tag.setActive(request.isActive());
 
-        Tag updated = tagRepository.save(tag);
-
-        return TagMapper.toResponse(updated);
+        return TagMapper.toResponse(tagRepository.save(tag));
     }
 
     @Override
     public void deleteTag(Long id) {
-        tagRepository.deleteById(id);
+        User user = getCurrentUser();
+
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tag not found"));
+
+        validateTagOwnership(tag, user);
+
+        tagRepository.delete(tag);
     }
 
-    // Bạn cần Autowired ITaskTagRepository vào đây
+    // ================= TAG - TASK =================
+
     @Override
     @Transactional
     public void assignTagsToTask(List<Long> tagIds, Task task) {
         if (tagIds == null || tagIds.isEmpty()) return;
 
+        User user = getCurrentUser();
+
         List<TaskTag> taskTags = tagIds.stream().map(tagId -> {
-            // 1. Tìm Tag từ DB
             Tag tag = tagRepository.findById(tagId)
                     .orElseThrow(() -> new RuntimeException("Tag không tồn tại: " + tagId));
 
-            // 2. Dùng Mapper để đúc ra thực thể trung gian
+            validateTagOwnership(tag, user);
+
             return TagMapper.toTaskTagEntity(tag, task);
         }).toList();
 
-        // 3. Lưu hàng loạt vào bảng trung gian
         taskTagRepository.saveAll(taskTags);
     }
+
     @Override
     public List<TagResponse> getActiveTagsByUserId(Long userId) {
-
         return tagRepository.findByUserIdAndActiveTrue(userId).stream()
                 .map(TagMapper::toResponse)
                 .collect(Collectors.toList());
@@ -91,41 +118,44 @@ public class TagServiceImpl implements ITagService {
     @Override
     @Transactional
     public void updateTagsForTask(List<Long> newTagIds, Task task) {
-        // 1. Lấy danh sách TaskTag hiện tại từ Database của Task này
+        User user = getCurrentUser();
+
         List<TaskTag> currentTaskTags = taskTagRepository.findByTask(task);
 
-        // Nếu danh sách mới rỗng, xóa tất cả tag cũ của task này
         if (newTagIds == null || newTagIds.isEmpty()) {
             taskTagRepository.deleteAll(currentTaskTags);
             return;
         }
 
-        // 2. Chuyển list ID mới thành Set để tra cứu nhanh
         Set<Long> newTagIdSet = new HashSet<>(newTagIds);
 
-        // 3. Xác định các Tag cần XÓA (Có trong DB nhưng không có trong Request mới)
+        // Tags cần xóa
         List<TaskTag> tagsToRemove = currentTaskTags.stream()
                 .filter(tt -> !newTagIdSet.contains(tt.getTag().getId()))
                 .collect(Collectors.toList());
 
-        // 4. Xác định các Tag ID cần THÊM MỚI (Có trong Request nhưng chưa có trong DB)
+        // Tags đã tồn tại
         Set<Long> existingTagIds = currentTaskTags.stream()
                 .map(tt -> tt.getTag().getId())
                 .collect(Collectors.toSet());
 
+        // Tags cần thêm
         List<TaskTag> tagsToAdd = newTagIds.stream()
                 .filter(tagId -> !existingTagIds.contains(tagId))
                 .map(tagId -> {
                     Tag tag = tagRepository.findById(tagId)
                             .orElseThrow(() -> new RuntimeException("Tag không tồn tại: " + tagId));
+
+                    validateTagOwnership(tag, user);
+
                     return TagMapper.toTaskTagEntity(tag, task);
                 })
                 .collect(Collectors.toList());
 
-        // 5. Thực thi lưu và xóa
         if (!tagsToRemove.isEmpty()) {
             taskTagRepository.deleteAll(tagsToRemove);
         }
+
         if (!tagsToAdd.isEmpty()) {
             taskTagRepository.saveAll(tagsToAdd);
         }

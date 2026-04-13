@@ -8,15 +8,15 @@ const toDate = (s) => (s ? new Date(s) : null);
 const formatTime = (s) => {
   if (!s) return "";
   return new Date(s).toLocaleTimeString("vi-VN", {
-    hour:   "2-digit",
+    hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   });
 };
 
 const isSameDay = (d1, d2) =>
-  d1.getDate()     === d2.getDate()  &&
-  d1.getMonth()    === d2.getMonth() &&
+  d1.getDate() === d2.getDate() &&
+  d1.getMonth() === d2.getMonth() &&
   d1.getFullYear() === d2.getFullYear();
 
 const isToday = (s) => {
@@ -43,39 +43,39 @@ const isThisWeek = (s) => {
 
 // ── Normalise TaskDetailResponse → shape dùng trong UI ───────────────────────
 const normalise = (raw) => ({
-  id:          raw.id,
-  title:       raw.title,
+  id: raw.id,
+  title: raw.title,
   description: raw.description ?? "",
-  completed:   raw.completed   ?? false,
-  dueDate:     raw.dueDate,
-  time:        formatTime(raw.dueDate),
-  listId:      raw.listId    ?? null,
-  nameList:    raw.nameList  ?? "",
-  listColor:   raw.listColor ?? null,
+  completed: raw.completed ?? false,
+  dueDate: raw.dueDate,
+  time: formatTime(raw.dueDate),
+  listId: raw.listId ?? null,
+  nameList: raw.nameList ?? "",
+  listColor: raw.listColor ?? null,
   tags: (raw.tags ?? []).map((t) => ({
-    id:      t.id,
+    id: t.id,
     nameTag: t.nameTag,
-    color:   t.color,
-    active:  t.active,
+    color: t.color,
+    active: t.active,
   })),
   subTasks: (raw.subTasks ?? []).map((s) => ({
-    id:        s.id,
-    title:     s.title,
+    id: s.id,
+    title: s.title,
     completed: s.completed,
-    taskId:    s.taskId ?? raw.id,
+    taskId: s.taskId ?? raw.id,
   })),
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
 export function useUpcoming() {
-  const [tasks,   setTasks]   = useState([]);
-  const [tags,    setTags]    = useState([]);
-  const [lists,   setLists]   = useState([]);
-  const [filter,  setFilter]  = useState("all");
+  const [tasks, setTasks] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [lists, setLists] = useState([]);
+  const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
+  const [error, setError] = useState(null);
 
-  const user   = AuthService.getUser();
+  const user = AuthService.getUser();
   const userId = user?.id;
 
   // ── Load lần đầu ────────────────────────────────────────────────────────────
@@ -102,15 +102,16 @@ export function useUpcoming() {
             axiosInstance.get(`/tasks/${t.id}`).catch((err) => {
               console.error(`Lỗi fetch detail task ${t.id}:`, err);
               return null; // trả về null thay vì throw
-            })
-          )
+            }),
+          ),
         );
 
         setTags(tagList);
         setLists(listData);
         setTasks(details.filter(Boolean).map(normalise)); // bỏ qua task null
       } catch (err) {
-        const msg = err?.response?.data?.message ?? err?.message ?? "Lỗi kết nối server";
+        const msg =
+          err?.response?.data?.message ?? err?.message ?? "Lỗi kết nối server";
         setError(msg);
       } finally {
         setLoading(false);
@@ -132,51 +133,56 @@ export function useUpcoming() {
       setTags((prev) => [...prev, created]);
       return created;
     },
-    [userId]
+    [userId],
   );
 
   // ── Task: tạo mới ─────────────────────────────────────────────────────────────
   // Fix: listId phải là number (Long) — select trả về string → parse trước khi gửi
-  const addTask = useCallback(async ({ title, date, time, tagIds = [], listId = null }) => {
-    // Đảm bảo dueDate đúng format LocalDateTime: "2026-04-12T09:00:00"
-    const timePart = time.length === 5 ? `${time}:00` : time; // "09:00" → "09:00:00"
-    const dueDate  = `${date}T${timePart}`;
+  const addTask = useCallback(
+    async ({ title, date, time, tagIds = [], listId = null }) => {
+      // Đảm bảo dueDate đúng format LocalDateTime: "2026-04-12T09:00:00"
+      const timePart = time.length === 5 ? `${time}:00` : time; // "09:00" → "09:00:00"
+      const dueDate = `${date}T${timePart}`;
 
-    // listId từ <select> là string → parse sang number, null nếu rỗng
-    const parsedListId = listId && listId !== "" ? Number(listId) : null;
+      // listId từ <select> là string → parse sang number, null nếu rỗng
+      const parsedListId = listId && listId !== "" ? Number(listId) : null;
 
-    // tagIds đảm bảo là array of number
-    const parsedTagIds = (tagIds ?? []).map(Number).filter(Boolean);
+      // tagIds đảm bảo là array of number
+      const parsedTagIds = (tagIds ?? []).map(Number).filter(Boolean);
 
-    try {
-      const created = await axiosInstance.post("/tasks", {
-        title,
-        description: "",
-        dueDate,
-        listId:   parsedListId,
-        subtasks: [],          // List<SubTaskRequest> rỗng
-        tagIds:   parsedTagIds,
-      });
+      try {
+        const created = await axiosInstance.post("/tasks", {
+          title,
+          description: "",
+          dueDate,
+          listId: parsedListId,
+          subtasks: [], // List<SubTaskRequest> rỗng
+          tagIds: parsedTagIds,
+        });
 
-      // created = TaskResponse (không có tags/subTasks)
-      // → fetch TaskDetailResponse để có đủ data cho card
-      const detail = await axiosInstance.get(`/tasks/${created.id}`).catch((err) => {
-        console.error("Fetch detail sau khi tạo task thất bại:", err);
-        // Fallback: dùng TaskResponse đã có, bổ sung fields còn thiếu
-        return {
-          ...created,
-          tags:     [],
-          subTasks: [],
-        };
-      });
+        // created = TaskResponse (không có tags/subTasks)
+        // → fetch TaskDetailResponse để có đủ data cho card
+        const detail = await axiosInstance
+          .get(`/tasks/${created.id}`)
+          .catch((err) => {
+            console.error("Fetch detail sau khi tạo task thất bại:", err);
+            // Fallback: dùng TaskResponse đã có, bổ sung fields còn thiếu
+            return {
+              ...created,
+              tags: [],
+              subTasks: [],
+            };
+          });
 
-      setTasks((prev) => [...prev, normalise(detail)]);
-    } catch (err) {
-      // Ném lỗi lên để AddForm / FormTask có thể bắt và hiện thông báo
-      const msg = err?.response?.data ?? err?.message ?? "Tạo task thất bại";
-      throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
-    }
-  }, []);
+        setTasks((prev) => [...prev, normalise(detail)]);
+      } catch (err) {
+        // Ném lỗi lên để AddForm / FormTask có thể bắt và hiện thông báo
+        const msg = err?.response?.data ?? err?.message ?? "Tạo task thất bại";
+        throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
+      }
+    },
+    [],
+  );
 
   // ── Task: xóa ─────────────────────────────────────────────────────────────────
   const deleteTask = useCallback(async (id) => {
@@ -198,10 +204,8 @@ export function useUpcoming() {
       });
       setTasks((prev) =>
         prev.map((t) =>
-          t.id === taskId
-            ? { ...t, subTasks: [...t.subTasks, created] }
-            : t
-        )
+          t.id === taskId ? { ...t, subTasks: [...t.subTasks, created] } : t,
+        ),
       );
     } catch (err) {
       console.error("Thêm subtask thất bại:", err);
@@ -222,13 +226,13 @@ export function useUpcoming() {
           return { ...s, completed: !s.completed };
         });
         return { ...t, subTasks: nextSubs };
-      })
+      }),
     );
 
     try {
       await axiosInstance.put(`/subtasks/${subId}`, {
-        id:        subId,
-        title:     currentSub?.title ?? "",
+        id: subId,
+        title: currentSub?.title ?? "",
         taskId,
         completed: !currentSub?.completed,
       });
@@ -241,10 +245,10 @@ export function useUpcoming() {
           return {
             ...t,
             subTasks: t.subTasks.map((s) =>
-              s.id === subId ? { ...s, completed: !s.completed } : s
+              s.id === subId ? { ...s, completed: !s.completed } : s,
             ),
           };
-        })
+        }),
       );
     }
   }, []);
@@ -260,20 +264,20 @@ export function useUpcoming() {
       prev.map((t) =>
         t.id === taskId
           ? { ...t, subTasks: t.subTasks.filter((s) => s.id !== subId) }
-          : t
-      )
+          : t,
+      ),
     );
   }, []);
 
   const updateTaskUI = useCallback(async (taskId) => {
     try {
-        const res = await axiosInstance.get(`/tasks/${taskId}`);
-        const updatedTask = normalise(res);
-        setTasks(prev => prev.map(t => t.id === taskId ? updatedTask : t));
+      const res = await axiosInstance.get(`/tasks/${taskId}`);
+      const updatedTask = normalise(res);
+      setTasks((prev) => prev.map((t) => (t.id === taskId ? updatedTask : t)));
     } catch (err) {
-        console.error("Lỗi cập nhật UI:", err);
+      console.error("Lỗi cập nhật UI:", err);
     }
-}, []);
+  }, []);
 
   // ── Filter theo listId ────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -286,19 +290,45 @@ export function useUpcoming() {
   const grouped = useMemo(() => {
     const sort = (arr) =>
       [...arr].sort((a, b) => (a.dueDate ?? "").localeCompare(b.dueDate ?? ""));
-    return [
-      { key: "today",    label: "Hôm nay",  items: sort(filtered.filter((i) => isToday(i.dueDate)))    },
-      { key: "tomorrow", label: "Ngày mai",  items: sort(filtered.filter((i) => isTomorrow(i.dueDate))) },
-      { key: "week",     label: "Tuần này",  items: sort(filtered.filter((i) => isThisWeek(i.dueDate))) },
-    ].filter((g) => g.items.length > 0);
-  }, [filtered]);
 
+    const todayItems = filtered.filter((i) => isToday(i.dueDate));
+    const tomorrowItems = filtered.filter((i) => isTomorrow(i.dueDate));
+
+    return [
+      {
+        key: "today",
+        label: "Today",
+        items: sort(todayItems),
+      },
+      {
+        key: "tomorrow",
+        label: "Tomorrow",
+        items: sort(tomorrowItems),
+      },
+      {
+        key: "week",
+        label: "This Week",
+        // ✅ LẤY PHẦN CÒN LẠI TRONG TUẦN
+        items: sort(
+          filtered.filter((i) => !isToday(i.dueDate) && !isTomorrow(i.dueDate)),
+        ),
+      },
+    ];
+  }, [filtered]);
   return {
-    grouped, filter, setFilter,
-    tags, lists, loading, error,
+    grouped,
+    filter,
+    setFilter,
+    tags,
+    lists,
+    loading,
+    error,
     addTag,
-    addTask,    deleteTask,
-    addSubTask, toggleSubTask, deleteSubTask,
+    addTask,
+    deleteTask,
+    addSubTask,
+    toggleSubTask,
+    deleteSubTask,
     updateTaskUI,
   };
 }
