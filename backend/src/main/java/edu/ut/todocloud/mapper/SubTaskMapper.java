@@ -13,7 +13,7 @@ public class SubTaskMapper {
         if (request == null) return null;
         SubTask subTask = new SubTask();
         subTask.setTitle(request.getTitle());
-        subTask.setCompleted(false);
+        subTask.setCompleted(request.isCompleted());
         subTask.setTask(task);
         return subTask;
     }

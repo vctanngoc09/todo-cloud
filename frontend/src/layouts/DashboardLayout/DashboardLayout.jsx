@@ -146,7 +146,7 @@ function DashboardLayout() {
               </li>
             ))}
 
-            {lists.length > LISTS_LIMIT && (
+            {activeLists.length > LISTS_LIMIT && (
               <li
                 className={styles.showMoreBtn}
                 onClick={() => setShowAllLists(!showAllLists)}
@@ -157,7 +157,7 @@ function DashboardLayout() {
                 <span>
                   {showAllLists
                     ? "Thu gọn"
-                    : `Xem thêm ${lists.length - LISTS_LIMIT}`}
+                    : `Xem thêm ${activeLists.length - LISTS_LIMIT}`}
                 </span>
               </li>
             )}

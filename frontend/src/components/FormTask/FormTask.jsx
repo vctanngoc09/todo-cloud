@@ -2,23 +2,29 @@ import styles from "./FormTask.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faClock, faCalendarDays } from "@fortawesome/free-regular-svg-icons";
-import { getAllListsActive } from "../../api/list";
-import { getTagsByUserId } from "../../api/tag";
-import { AuthService } from "../../services/auth.service";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react"; // PHẢI CÓ useMemo Ở ĐÂY
 import AddSubtaskForm from "../AddSubtaskForm/AddSubtaskForm";
 import { createTask, updateTask } from "../../api/task";
-function FormTask({ task, onClose, onSaveSuccess }) {
-  const [lists, setLists] = useState([]);
-  const [tags, setTags] = useState([]);
 
-  const user = AuthService.getUser();
-  const userId = user?.id;
+// 1. Import cả 2 Context
+import { useLists } from "../../contexts/ListsContext.jsx";
+import { useTags } from "../../contexts/TagsContext.jsx";
+
+function FormTask({ task, onClose, onSaveSuccess }) {
+  // 2. Lấy dữ liệu từ Contexts - XÓA BỎ các useState tags cũ
+  const { lists } = useLists();
+  const { tags } = useTags();
+
+  // 3. Lọc Active bằng useMemo để tránh vòng lặp vô tận
+  const activeLists = useMemo(
+    () => lists.filter((list) => list.active),
+    [lists],
+  );
+  const activeTags = useMemo(() => tags.filter((tag) => tag.active), [tags]);
 
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const [subtasks, setSubtasks] = useState(task?.subTasks || []);
 
-  // 🔥 FORM DATA
   const [taskData, setTaskData] = useState({
     title: "",
     description: "",
@@ -28,6 +34,7 @@ function FormTask({ task, onClose, onSaveSuccess }) {
     tagIds: [],
   });
 
+  // 4. Đồng bộ dữ liệu khi mở Form
   useEffect(() => {
     if (task) {
       setSubtasks(task.subTasks || []);
@@ -54,13 +61,12 @@ function FormTask({ task, onClose, onSaveSuccess }) {
     }
   }, [task]);
 
+  // Logic xử lý Subtask
   const handleAddSubtaskUI = (title) => {
-    const newSub = {
-      id: null, // id null để BE biết đây là subtask mới cần tạo
-      title: title,
-      completed: false,
-    };
-    setSubtasks((prev) => [...prev, newSub]);
+    setSubtasks((prev) => [
+      ...prev,
+      { id: null, title: title, completed: false },
+    ]);
     setShowSubtaskForm(false);
   };
 
@@ -72,54 +78,14 @@ function FormTask({ task, onClose, onSaveSuccess }) {
     );
   };
 
-  // =============================
-  // FETCH LIST
-  // =============================
-  useEffect(() => {
-    const fetchLists = async () => {
-      try {
-        const res = await getAllListsActive();
-        setLists(res);
-      } catch (error) {
-        console.error("Lỗi list:", error);
-      }
-    };
-    fetchLists();
-  }, []);
-
-  // =============================
-  // FETCH TAG
-  // =============================
-  useEffect(() => {
-    if (!userId) return;
-
-    const fetchTags = async () => {
-      try {
-        const res = await getTagsByUserId(userId);
-        setTags(res);
-      } catch (error) {
-        console.error("Lỗi tag:", error);
-      }
-    };
-
-    fetchTags();
-  }, [userId]);
-
-  // =============================
-  // INPUT CHANGE
-  // =============================
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTaskData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // =============================
-  // TOGGLE TAG
-  // =============================
   const toggleTag = (tagId) => {
     setTaskData((prev) => {
       const exists = prev.tagIds.includes(tagId);
-
       return {
         ...prev,
         tagIds: exists
@@ -129,15 +95,8 @@ function FormTask({ task, onClose, onSaveSuccess }) {
     });
   };
 
-  // =============================
-  // AUTO TEXT COLOR
-  // =============================
-
   const handleSave = async () => {
-    if (!taskData.title.trim()) {
-      alert("Vui lòng nhập tên công việc!");
-      return;
-    }
+    if (!taskData.title.trim()) return alert("Vui lòng nhập tên công việc!");
 
     const combinedDateTime = taskData.dueDate
       ? `${taskData.dueDate}T${taskData.dueTime || "00:00"}:00`
@@ -153,24 +112,15 @@ function FormTask({ task, onClose, onSaveSuccess }) {
     };
 
     try {
-      let response;
-      if (task?.id) {
-        // CHẾ ĐỘ CẬP NHẬT
-        console.log("Đang cập nhật Task:", task.id, payload);
-        response = await updateTask(task.id, payload);
-      } else {
-        // CHẾ ĐỘ TẠO MỚI
-        console.log("Đang tạo Task mới:", payload);
-        response = await createTask(payload);
-      }
-
+      const response = task?.id
+        ? await updateTask(task.id, payload)
+        : await createTask(payload);
       if (response) {
         alert(task?.id ? "Cập nhật thành công!" : "Tạo Task thành công!");
-        if (onSaveSuccess) onSaveSuccess(); // Refresh danh sách ở Today.js
+        if (onSaveSuccess) onSaveSuccess();
         onClose();
       }
     } catch (error) {
-      console.error("Lỗi khi lưu Task:", error);
       alert("Lỗi: " + (error.response?.data?.message || error.message));
     }
   };
@@ -178,7 +128,6 @@ function FormTask({ task, onClose, onSaveSuccess }) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.form}>
-        {/* HEADER */}
         <div className={styles.header}>
           <span className={styles.title}>
             {task?.id ? "Edit Task" : "New Task"}
@@ -190,25 +139,21 @@ function FormTask({ task, onClose, onSaveSuccess }) {
           />
         </div>
 
-        {/* TITLE */}
         <input
           name="title"
           className={styles.inputMain}
-          placeholder="Task name"
           value={taskData.title}
           onChange={handleChange}
+          placeholder="Task name"
         />
-
-        {/* DESCRIPTION */}
         <textarea
           name="description"
           className={styles.textarea}
-          placeholder="Description"
           value={taskData.description}
           onChange={handleChange}
+          placeholder="Description"
         />
 
-        {/* LIST */}
         <div className={styles.row}>
           <label>List</label>
           <select
@@ -218,7 +163,7 @@ function FormTask({ task, onClose, onSaveSuccess }) {
             onChange={handleChange}
           >
             <option value="">None</option>
-            {lists.map((list) => (
+            {activeLists.map((list) => (
               <option key={list.id} value={list.id}>
                 {list.nameList}
               </option>
@@ -226,7 +171,6 @@ function FormTask({ task, onClose, onSaveSuccess }) {
           </select>
         </div>
 
-        {/* DATE */}
         <div className={styles.row}>
           <label>Due date</label>
           <div className={styles.inputWrapper}>
@@ -244,7 +188,6 @@ function FormTask({ task, onClose, onSaveSuccess }) {
           </div>
         </div>
 
-        {/* TIME */}
         <div className={styles.row}>
           <label>Time</label>
           <div className={styles.inputWrapper}>
@@ -259,38 +202,24 @@ function FormTask({ task, onClose, onSaveSuccess }) {
           </div>
         </div>
 
-        {/* ========================= */}
-        {/* TAGS */}
-        {/* ========================= */}
         <div className={styles.row}>
           <label>Tags</label>
           <div className={styles.tagGroup}>
-            {tags.map((tag) => {
-              const isActive = taskData.tagIds.includes(tag.id);
-
-              return (
-                <span
-                  key={tag.id}
-                  onClick={() => toggleTag(tag.id)}
-                  className={`${styles.tagBadge} ${
-                    isActive ? styles.activeTag : ""
-                  }`}
-                  style={{
-                    backgroundColor: tag.color,
-                    color: "white",
-                  }}
-                >
-                  {tag.nameTag}
-                </span>
-              );
-            })}
+            {activeTags.map((tag) => (
+              <span
+                key={tag.id}
+                onClick={() => toggleTag(tag.id)}
+                className={`${styles.tagBadge} ${taskData.tagIds.includes(tag.id) ? styles.activeTag : ""}`}
+                style={{ backgroundColor: tag.color, color: "white" }}
+              >
+                {tag.nameTag}
+              </span>
+            ))}
           </div>
         </div>
 
         <div className={styles.subtasksSection}>
           <h3 className={styles.subtaskTitle}>Subtasks:</h3>
-
-          {/* 1. Đưa nút Add và Form lên đầu danh sách */}
           {showSubtaskForm ? (
             <AddSubtaskForm
               onAdd={handleAddSubtaskUI}
@@ -305,8 +234,6 @@ function FormTask({ task, onClose, onSaveSuccess }) {
               <span>Add New Subtask</span>
             </button>
           )}
-
-          {/* 2. Danh sách subtasks hiện ở dưới nút thêm */}
           <div className={styles.subtaskList}>
             {subtasks.map((sub, index) => (
               <div key={index} className={styles.subtaskItem}>
@@ -314,8 +241,8 @@ function FormTask({ task, onClose, onSaveSuccess }) {
                   type="checkbox"
                   id={`sub-${index}`}
                   className={styles.checkbox}
-                  checked={sub.completed} // Dùng checked thay vì defaultChecked
-                  onChange={() => handleToggleSubtask(index)} // Gọi hàm toggle khi click
+                  checked={sub.completed}
+                  onChange={() => handleToggleSubtask(index)}
                 />
                 <label htmlFor={`sub-${index}`}>{sub.title}</label>
               </div>
@@ -323,7 +250,6 @@ function FormTask({ task, onClose, onSaveSuccess }) {
           </div>
         </div>
 
-        {/* FOOTER */}
         <div className={styles.actions}>
           <button className={styles.deleteBtn} type="button">
             Delete Task
