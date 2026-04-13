@@ -1,22 +1,21 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthService } from "../services/auth.service";
-
-// Giả sử các hàm này đã được định nghĩa trong file api/list.js của bạn
 import { getAllLists, createList, updateList, deleteList } from "../api/list";
 
 const ListsContext = createContext();
 
 export const ListsProvider = ({ children }) => {
-  const [lists, setLists] = useState([]); // Chứa tất cả danh sách (Active/Inactive)
-  const [loading, setLoading] = useState(true);
-
-  const user = AuthService.getUser();
-  const userId = user?.id;
+  const [lists, setLists] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // ================= LOAD ALL LISTS =================
   const fetchLists = async () => {
-    // Lưu ý: Để quản lý được cả list ẩn, bạn nên dùng API lấy toàn bộ
-    // Ở đây mình dùng getAllListsActive theo flow hiện tại của bạn
+    const token = AuthService.getToken();
+    if (!token) {
+      setLists([]);
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await getAllLists();
@@ -29,35 +28,44 @@ export const ListsProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // 1. Chạy lần đầu
     fetchLists();
-  }, [userId]);
 
-  // ================= ADD LIST =================
+    // 2. Lắng nghe tín hiệu từ AuthService
+    const handleAuthChange = () => {
+      fetchLists();
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+    // Vẫn giữ storage để đồng bộ giữa các tab khác nhau
+    window.addEventListener("storage", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
+
+  // Để đảm bảo đăng nhập xong là chạy liền, bạn nên lắng nghe giá trị Token
+  const currentToken = AuthService.getToken();
+  useEffect(() => {
+    fetchLists();
+  }, [currentToken]); // <--- Mỗi khi Token thay đổi, hàm này sẽ tự chạy
+
+  // ================= CÁC HÀM API KHÁC =================
   const addList = async (data) => {
-    const currentUser = AuthService.getUser();
-    if (!currentUser) {
-      throw new Error("Vui lòng đăng nhập lại.");
-    }
-
-    // Gửi yêu cầu tạo list mới (Backend tự lấy User từ Token hoặc bạn gửi kèm ID)
     const newList = await createList(data);
     setLists((prev) => [...prev, newList]);
     return newList;
   };
 
-  // ================= UPDATE LIST =================
   const updateListById = async (data) => {
     const id = data.id;
     try {
       const updated = await updateList(id, data);
-
       setLists((prev) =>
-        prev.map((l) => {
-          // Sử dụng cơ chế gộp giống bên Tags
-          return l.id === id ? { ...l, ...updated } : l;
-        }),
+        prev.map((l) => (l.id === id ? { ...l, ...updated } : l)),
       );
-
       return updated;
     } catch (err) {
       console.error("Lỗi khi cập nhật list:", err);
@@ -65,18 +73,12 @@ export const ListsProvider = ({ children }) => {
     }
   };
 
-  // ================= DELETE LIST (SOFT DELETE) =================
   const deleteListById = async (id) => {
     try {
-      // QUAN TRỌNG: Gọi đúng API deleteList (DELETE method)
-      // Backend của bạn: @DeleteMapping("/{id}") -> setActive(false)
       await deleteList(id);
-
-      // Sau khi Backend báo thành công, cập nhật UI
       setLists((prev) =>
         prev.map((l) => (l.id === id ? { ...l, active: false } : l)),
       );
-
       return true;
     } catch (err) {
       console.error("Lỗi khi ẩn list:", err);
@@ -102,8 +104,7 @@ export const ListsProvider = ({ children }) => {
 
 export const useLists = () => {
   const context = useContext(ListsContext);
-  if (!context) {
+  if (!context)
     throw new Error("useLists phải được sử dụng trong ListsProvider");
-  }
   return context;
 };

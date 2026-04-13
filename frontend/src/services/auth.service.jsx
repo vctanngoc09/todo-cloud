@@ -4,12 +4,14 @@ const USER_KEY = "user";
 export const AuthService = {
   setToken(token) {
     localStorage.setItem(TOKEN_KEY, token);
+    window.dispatchEvent(new Event("authChange"));
   },
   getToken() {
     return localStorage.getItem(TOKEN_KEY);
   },
   setUser(user) {
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+    window.dispatchEvent(new Event("authChange"));
   },
   getUser() {
     const user = localStorage.getItem(USER_KEY);
@@ -18,6 +20,7 @@ export const AuthService = {
   logout() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    window.dispatchEvent(new Event("authChange"));
     window.location.href = "/login";
   },
   isAuthenticated() {

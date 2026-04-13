@@ -89,6 +89,12 @@ function DashboardLayout() {
     }
   };
 
+  const handleLogout = () => {
+    if (window.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+      AuthService.logout();
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       {/* SIDEBAR */}
@@ -102,7 +108,6 @@ function DashboardLayout() {
         </div>
 
         {/* SEARCH */}
-        
 
         {/* TASKS */}
         <div className={styles.section}>
@@ -138,7 +143,6 @@ function DashboardLayout() {
                   />
                   {list.nameList}
                 </div>
-              
               </li>
             ))}
 
@@ -212,7 +216,11 @@ function DashboardLayout() {
 
         {/* FOOTER */}
         <div className={styles.sidebarFooter}>
-          <div className={styles.footerItem}>
+          <div
+            className={styles.footerItem}
+            onClick={handleLogout}
+            style={{ cursor: "pointer" }}
+          >
             <FontAwesomeIcon icon={faSignOutAlt} /> Đăng xuất
           </div>
         </div>
