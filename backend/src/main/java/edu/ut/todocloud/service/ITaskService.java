@@ -19,4 +19,5 @@ public interface ITaskService {
     TaskResponse updateTask(Long id, TaskRequest taskRequest);
     TaskDetailResponse getTaskById(Long id);
     void deleteTask(Long id);
+    void toggleTaskStatus(Long id);
 }

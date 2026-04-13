@@ -216,4 +216,15 @@ public class TaskServiceImpl implements ITaskService {
         // → Hibernate tự xóa sub_tasks và task_tags liên quan khi xóa Task
         taskRepository.delete(task);
     }
+
+    @Override
+    @Transactional
+    public void toggleTaskStatus(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Task với ID: " + id));
+
+        // Đảo ngược trạng thái hiện tại
+        task.setCompleted(!task.isCompleted());
+        taskRepository.save(task);
+    }
 }

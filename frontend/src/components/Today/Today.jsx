@@ -2,7 +2,7 @@ import styles from "./Today.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import FormTask from "../FormTask/FormTask";
-import { getTaskDetail, getTodayTasks } from "../../api/task";
+import { getTaskDetail, getTodayTasks, toggleTaskStatus } from "../../api/task";
 import {
   faAngleRight,
   faBusinessTime,
@@ -28,6 +28,26 @@ function Today() {
       console.error("Lỗi khi lấy task hôm nay:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleCompleted = async (e, taskId) => {
+    e.stopPropagation(); // Chặn sự kiện nổi bọt để không mở FormTask
+
+    try {
+      await toggleTaskStatus(taskId);
+      // Cách 1: Fetch lại toàn bộ danh sách (Dễ nhất)
+      fetchTasks();
+
+      // Cách 2: Tối ưu hơn - Cập nhật state tại chỗ để không phải load lại
+      /*
+      setTasks(prev => prev.map(t => 
+        t.id === taskId ? { ...t, completed: !t.completed } : t
+      ));
+      */
+    } catch (error) {
+      console.error("Lỗi khi đổi trạng thái task:", error);
+      alert("Không thể cập nhật trạng thái công việc.");
     }
   };
 
@@ -91,8 +111,9 @@ function Today() {
                     <input
                       type="checkbox"
                       className={styles.checkbox}
-                      defaultChecked={task.completed}
-                      onClick={(e) => e.stopPropagation()} // Ngăn việc mở form khi bấm checkbox
+                      checked={task.completed}
+                      onChange={(e) => handleToggleCompleted(e, task.id)} // Dùng onChange thay vì onClick
+                      onClick={(e) => e.stopPropagation()}
                     />
                     <span className={styles.title}>{task.title}</span>
                   </div>

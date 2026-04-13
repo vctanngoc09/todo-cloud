@@ -81,4 +81,14 @@ public class TaskController {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/toggle")
+    public ResponseEntity<?> toggleTaskStatus(@PathVariable Long id) {
+        try {
+            taskService.toggleTaskStatus(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
+        }
+    }
 }
