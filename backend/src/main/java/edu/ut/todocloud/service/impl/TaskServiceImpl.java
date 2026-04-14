@@ -227,4 +227,20 @@ public class TaskServiceImpl implements ITaskService {
         task.setCompleted(!task.isCompleted());
         taskRepository.save(task);
     }
+    @Transactional
+    public void toggleCompleted(Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        if (!task.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("You do not have permission to modify this task");
+        }
+
+        task.setCompleted(!task.isCompleted());
+
+    }
 }

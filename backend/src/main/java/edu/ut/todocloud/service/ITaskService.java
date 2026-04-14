@@ -20,4 +20,5 @@ public interface ITaskService {
     TaskDetailResponse getTaskById(Long id);
     void deleteTask(Long id);
     void toggleTaskStatus(Long id);
+    void toggleCompleted(Long id);
 }

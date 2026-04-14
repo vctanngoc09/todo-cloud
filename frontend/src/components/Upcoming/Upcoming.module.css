@@ -1,7 +1,38 @@
-.wrapper {
-  padding: 20px;
+.layoutContainer {
+  display: flex;
   background: #ffffff;
   min-height: 100vh;
+  width: 100%;
+  align-items: flex-start; /* Quan trọng để sidebar không bị kéo dài vô lý */
+}
+
+.wrapper {
+  flex: 1;
+
+  min-width: 0; /* Ngăn chặn flex item phình to quá mức */
+}
+
+.sideForm {
+  width: auto;
+  background: #fff;
+  border-left: 1px solid #f0f0f0;
+  min-height: 100vh; /* Đảm bảo chiều cao sidebar luôn phủ hết lề phải */
+  position: sticky;
+  top: 0;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.02);
+  z-index: 100;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* HEADER */
@@ -9,14 +40,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-/* FILTER BOX */
-.filterBox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  margin-bottom: 30px;
 }
 
 /* ========================= */
@@ -76,124 +100,87 @@
   border-radius: 4px;
 }
 
-/* COUNT */
-.count {
-  background: #e5e7eb;
-  padding: 4px 10px;
-  border-radius: 10px;
-  font-size: 14px;
+/* TASK LISTS */
+.section h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
 }
 
-/* ========================= */
-/* SECTION */
-/* ========================= */
-.section {
+.card {
+  border: 1px solid #eee;
+  border-radius: 16px;
+  background: #fff;
   margin-bottom: 20px;
 }
 
-.section h2 {
-  margin-bottom: 10px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* ========================= */
-/* CARD */
-/* ========================= */
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 10px;
-  border: 1px solid #eee;
-}
-
-/* ========================= */
-/* ADD TASK */
-/* ========================= */
 .addTask {
-  padding: 10px;
-  color: #888;
-  border-bottom: 1px solid #eee;
+  padding: 18px;
+  color: #bbb;
   cursor: pointer;
-  font-size: 14px;
+  border-bottom: 1px solid #f8f8f8;
 }
 
-.addTask:hover {
-  background: #f3f4f6;
-}
-
-/* ========================= */
-/* TASK */
-/* ========================= */
 .taskItem {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 18px;
+  border-bottom: 1px solid #f8f8f8;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-.taskItem:hover {
-  background: #f9fafb;
+.taskItem:last-child {
+  border-bottom: none;
 }
 
 .left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+}
+.left input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #ffd43b;
 }
 
-.title {
-  font-size: 14px;
+.completedText {
+  text-decoration: line-through;
+  color: #ccc;
 }
 
-/* ========================= */
-/* RIGHT */
-/* ========================= */
 .right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
-
-/* SUBTASK */
 .subtask {
   font-size: 12px;
-  background: #f1f5f9;
-  padding: 2px 6px;
+  background: #f0f4f8;
+  padding: 3px 10px;
   border-radius: 6px;
 }
-
-/* TAG */
 .tag {
   font-size: 12px;
-  color: white;
-  padding: 2px 8px;
+  color: #fff;
+  padding: 3px 12px;
   border-radius: 6px;
-  font-weight: 500;
 }
-
-/* ARROW */
 .arrow {
-  font-size: 18px;
-  color: #999;
+  color: #ddd;
+  font-size: 22px;
 }
 
-/* ========================= */
-/* GRID */
-/* ========================= */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(350px, 1fr)
+  ); /* Tự điều chỉnh grid */
+  gap: 30px;
 }
 
-/* ========================= */
-/* EMPTY */
-/* ========================= */
-.empty {
-  padding: 10px;
-  color: #999;
-  font-size: 14px;
+.colorDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
 }

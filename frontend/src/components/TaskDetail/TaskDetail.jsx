@@ -113,7 +113,7 @@ function TaskDetail({ taskId, onClose }) {
               <div></div>
               <div>
                 <label>Trạng thái: </label>
-                <span>{task.completed ? "Hoàn thành" : "Đang thực hiện"}</span>
+                <span>{task.completed ? "Hoàn thành" : "Chưa thực hiện"}</span>
               </div>
             </div>
           </>

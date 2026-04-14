@@ -91,4 +91,9 @@ public class TaskController {
             return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
         }
     }
+    @PutMapping("/update-completed/{id}")
+    public ResponseEntity<Void> toggleCompleted(@PathVariable Long id) {
+        taskService.toggleCompleted(id);
+        return ResponseEntity.ok().build();
+    }
 }

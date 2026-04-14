@@ -36,3 +36,6 @@ export const getMonthTasks = (date) => {
 export const toggleTaskStatus = async (taskId) => {
   return await axiosInstance.patch(`/tasks/${taskId}/toggle`);
 };
+export const toggleTaskCompleted = (id) => {
+  return axiosInstance.put(`/tasks/update-completed/${id}`);
+};
