@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # 1. Database
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: todo_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # 2. Backend (Spring Boot)
+  backend:
+    build: ./backend # Sửa lại cho đúng tên folder của bạn
+    container_name: spring-backend
+    restart: always 
+    depends_on:
+      - mysql-db
+    environment:
+      - DB_HOST=mysql-db
+      - DB_NAME=todo_db
+      - DB_USER=root
+      - DB_PASSWORD=root
+    ports:
+      - "8080:8080"
+
+  # 3. Frontend (ReactJS + Nginx)
+  frontend:
+    build: ./frontend # Sửa lại cho đúng tên folder của bạn
+    container_name: react-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:
