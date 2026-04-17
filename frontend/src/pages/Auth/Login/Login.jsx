@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../../api/auth"; // Đường dẫn tới file api/auth.js chuyên nghiệp của bạn
 import styles from "./Login.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -160,7 +160,7 @@ function Login() {
           </form>
 
           <p className={styles.footerText}>
-            Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
+            Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
           </p>
         </div>
       </div>
