@@ -4,6 +4,7 @@ import { register } from "../../../api/auth"; // Nhớ kiểm tra đúng đườ
 import styles from "./Register.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 function Register() {
   const navigate = useNavigate();
@@ -193,7 +194,7 @@ function Register() {
           </form>
 
           <p className={styles.footerLink}>
-            Đã có tài khoản? <a href="/login">Đăng nhập</a>
+            Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
           </p>
         </div>
       </div>

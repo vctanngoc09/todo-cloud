@@ -8,11 +8,7 @@ import Home from "./pages/Home/Home";
 import { Login, Register } from "./pages/Auth";
 
 function App() {
-  return (
-    <>
-      <AppRouter />
-    </>
-  );
+  return <AppRouter />;
 }
 
 export default App;
