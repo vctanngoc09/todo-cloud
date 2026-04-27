@@ -1,0 +1,35 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_API_URL=${_VITE_API_URL}'
+      - '-t'
+      - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/todocloud-repo/todocloud-fe:${_TAG}'
+      - './frontend'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/todocloud-repo/todocloud-fe:${_TAG}'
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'todocloud-fe',
+        '--image',
+        'asia-southeast1-docker.pkg.dev/$PROJECT_ID/todocloud-repo/todocloud-fe:${_TAG}',
+        '--region',
+        'asia-southeast1',
+        '--platform',
+        'managed',
+        '--allow-unauthenticated',
+        '--port',
+        '8080'
+      ]
+
+images:
+  - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/todocloud-repo/todocloud-fe:${_TAG}'

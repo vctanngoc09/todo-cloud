@@ -1,0 +1,11 @@
+target/
+*.jar
+.git/
+.idea/
+.vscode/
+bin/
+src/test/
+HELP.md
+mvnw
+mvnw.cmd
+.mvn/
